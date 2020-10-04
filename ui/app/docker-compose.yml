@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  node:
+    build:
+      context: .
+    image: "node:12.18"
+    user: "node"
+    working_dir: /home/node/app
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./:/home/node/app
+    expose:
+      - "3000"
+    command: "npm start"
+    ports:
+      - target: 3000
+        published: 3000
