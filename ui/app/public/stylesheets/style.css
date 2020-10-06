@@ -8,7 +8,7 @@ body {
     color: #00B7FF;
   }
   
-  html, body, #mapid {
+  html, body, #map-id {
     height: 100%;
     width: 100%;
   }
