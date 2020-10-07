@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const port = 3000
 const path = require('path');
-
+const ApiClient = require('./services/apiclient')
 
 // Configuration
 app.set('views', path.join(__dirname, 'views'));
@@ -13,7 +13,12 @@ app.use(express.urlencoded({ extended: false }));
 
 // Routing
 app.get('/', (req, res) => {
-  res.render('index', { title: 'IDI Palm Oil Tracker' });
+  ApiClient.getMills().then(millsDict => {
+    res.render('index', { 
+      title: 'IDI Palm Oil Tracker', 
+      millsDict: JSON.stringify(millsDict)
+    });
+  });
 })
 
 app.listen(port, () => {
