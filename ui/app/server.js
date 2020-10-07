@@ -3,8 +3,6 @@ const app = express()
 const port = 3000
 const path = require('path');
 const ApiClient = require('./services/apiclient')
-const fetch = require('node-fetch');
-
 
 // Configuration
 app.set('views', path.join(__dirname, 'views'));
