@@ -16,7 +16,7 @@ app.get('/', (req, res) => {
   ApiClient.getMills().then(millsDict => {
     res.render('index', { 
       title: 'IDI Palm Oil Tracker', 
-      millsDict: JSON.stringify(millsDict)
+      millsDictStr: JSON.stringify(millsDict)
     });
   });
 })

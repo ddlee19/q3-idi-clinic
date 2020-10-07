@@ -9,7 +9,7 @@ let webmap = L.map("map-id").setView(INDONESIA_COORDS, INITIAL_ZOOM_LEVEL);
 L.tileLayer(LIGHT_MAP_URL, { maxZoom: MAX_ZOOM }).addTo(webmap);
 
 // Add markers
-let millsDictJSON = JSON.parse(document.getElementById("map-script-id").getAttribute("data-mills-dict"));
+let millsDictJSON = JSON.parse(document.getElementById("map-script-id").getAttribute("data-mills-dict-str"));
 let markers = [];
 Object.keys(millsDictJSON).forEach(key => {
 	let mill = millsDictJSON[key];
