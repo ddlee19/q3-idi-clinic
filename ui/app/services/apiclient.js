@@ -1,15 +1,12 @@
 const fetch = require('node-fetch');
-const MILLS_URL = "https://opendata.arcgis.com/datasets/5c026d553ff049a585b90c3b1d53d4f5_34.geojson?where=country%20%3D%20'Indonesia'";
+const api_base = "http://172.17.0.1:5000/api/v1.0"
+
 
 class ApiClient {
 
     static async getMills(){
-        let jsonBody = await ApiClient.get(MILLS_URL);
-        let millDict = {};
-        jsonBody["features"].forEach(function(mill){
-            millDict[mill["properties"]["objectid"]] = mill["properties"];
-        });
-        return millDict;
+        let jsonBody = await ApiClient.get(api_base + "/mills");
+        return jsonBody['mills'];
     }
 
     static async get(url, retries=2, retryIntervalInSeconds=1){

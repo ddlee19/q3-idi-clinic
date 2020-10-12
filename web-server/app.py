@@ -1,36 +1,30 @@
 import os
 import requests
+import json
 
 from flask import Flask, jsonify, render_template, abort, make_response
 
-
+MILLS_URL = "https://opendata.arcgis.com/datasets/5c026d553ff049a585b90c3b1d53d4f5_34.geojson"
 app = Flask(__name__)
-
-mills = [
-    {
-        'id': 1,
-        'title': u'Palm Oil Mill',
-        'description': u'Large producer of palm oil.', 
-        'latitude': 91.8975,
-        'longitude': -45.2345
-    },
-    {
-        'id': 2,
-        'title': u'Palm Oil Mill Two',
-        'description': u'Large producer of palm oil.', 
-        'latitude': 91.8974,
-        'longitude': -45.2346
-    }
-]
 
 
 @app.route("/api/v1.0/mills", methods=['GET'])
 def get_mills():
-    return jsonify({'mills': mills})
+    payload = {'country': 'Indonesia'}
+    req = requests.get(MILLS_URL, params=payload)
+    res_json = json.loads(req.text)
+
+    if 'features' not in res_json or len(res_json['features']) == 0:
+        abort(404)
+
+    mills = res_json['features']
+    mills_dict = {x["properties"]["objectid"] : x["properties"] for x in mills}
+    return jsonify({'mills': mills_dict})
 
 
 @app.route('/api/v1.0/mills/<int:mill_id>', methods=['GET'])
 def get_task(mill_id):
+    mills = []
     mill = [mill for mill in mills if mill['id'] == mill_id]
     if len(mill) == 0:
         abort(404)
