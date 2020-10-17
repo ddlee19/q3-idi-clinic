@@ -13,6 +13,8 @@ from flask import Flask, jsonify, render_template, abort, make_response
 from app_util import build_mills_records
 from log_util import logger
 
+from folium_demo import get_folium_html
+
 MILLS_URL = "https://opendata.arcgis.com/datasets/5c026d553ff049a585b90c3b1d53d4f5_34.geojson"
 
 app = Flask(__name__)
@@ -33,6 +35,11 @@ def get_mill(mill_id):
     if mill_id not in mills_records:
         abort(404)
     return jsonify({'mill': mills_records[mill_id]})
+
+
+@app.route("/api/v1.0/folium-test", methods=['GET'])
+def get_folium():
+    return jsonify({'html': get_folium_html()})
 
 
 @app.errorhandler(404)
