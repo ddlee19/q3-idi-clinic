@@ -20,6 +20,11 @@ app.get('/', (req, res) => {
     });
   });
 })
+app.get('/folium-test', (req, res) => {
+  ApiClient.getFoliumMap().then(html => {
+    res.send(html);
+  });
+})
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)

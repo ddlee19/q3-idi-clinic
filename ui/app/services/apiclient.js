@@ -1,5 +1,5 @@
 const fetch = require('node-fetch');
-const api_base = "http://172.17.0.1:5000/api/v1.0"
+const api_base = "http://0.0.0.0:5000/api/v1.0"
 
 
 class ApiClient {
@@ -7,6 +7,11 @@ class ApiClient {
     static async getMills(){
         let jsonBody = await ApiClient.get(api_base + "/mills");
         return jsonBody['mills'];
+    }
+
+    static async getFoliumMap(){
+        let jsonBody = await ApiClient.get(api_base + "/folium-test");
+        return jsonBody['html'];
     }
 
     static async get(url, retries=2, retryIntervalInSeconds=1){
