@@ -1,14 +1,30 @@
-body {
+/* body {
     padding: 0px;
     margin: 0px;
     font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  }
+  } */
   
   a {
     color: #00B7FF;
   }
   
-  html, body, #map-id {
+  /* html, body, #map-id {
     height: 100%;
     width: 100%;
+  } */
+
+  /* #logo {
+    height: 150px;
+    width 45px;
+  } */
+  #navbar {
+    z-index: 100000;
   }
+  .height {
+    height: 100%;
+  }
+ .pusher {
+    height: 100%;
+    align-self: auto;
+  } 
+  
