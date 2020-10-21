@@ -10,7 +10,7 @@ class ApiClient {
     }
 
     static async getFoliumMap(){
-        let jsonBody = await ApiClient.get(api_base + "/folium-test");
+        let jsonBody = await ApiClient.get(api_base + "/folium-map");
         return jsonBody['html'];
     }
 

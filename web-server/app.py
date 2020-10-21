@@ -13,7 +13,7 @@ from flask import Flask, jsonify, render_template, abort, make_response
 from app_util import build_mills_records
 from log_util import logger
 
-from folium_demo import get_folium_html
+from folium_map.map_builder import get_folium_map
 
 MILLS_URL = "https://opendata.arcgis.com/datasets/5c026d553ff049a585b90c3b1d53d4f5_34.geojson"
 
@@ -37,9 +37,10 @@ def get_mill(mill_id):
     return jsonify({'mill': mills_records[mill_id]})
 
 
-@app.route("/api/v1.0/folium-test", methods=['GET'])
+@app.route("/api/v1.0/folium-map", methods=['GET'])
 def get_folium():
-    return jsonify({'html': get_folium_html()})
+    html = get_folium_map(mills_records)
+    return jsonify({'html': html})
 
 
 @app.errorhandler(404)

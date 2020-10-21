@@ -72,7 +72,14 @@ target/
 # pyenv
 .python-version
 
+# Private key file for Google Cloud service account
+*private-key.json
 
+# node modules
 *node_modules/
+
+# temp folder
+*temp/
+
 ### EOF
 

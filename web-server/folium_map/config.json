@@ -1,0 +1,32 @@
+{
+    "attribution": "Map Data &copy; <a href='https://earthengine.google.com/'>Google Earth Engine</a>",
+    "gee_image": "UMD/hansen/global_forest_change_2019_v1_7",
+    "map_start": {
+        "latitude": -0.7893,
+        "longitude": 113.9213,
+        "zoom": 5
+    },
+    "layers": {
+        "treecover2000": {
+            "name": "treecover2000",
+                "min_zoom": 2,
+                "max_zoom": 16,
+                "visual_params":{
+                    "bands": ["treecover2000"],
+                    "max": 100,
+                    "palette": ["66cc66", "003311"]
+                }
+            },
+            "treecoverloss": {
+                "name": "treecover loss",
+                "min_zoom": 2,
+                "max_zoom": 16,
+                "visual_params":{
+                    "bands": ["loss"],
+                    "max": 1,
+                    "palette": ["red"],
+                    "opacity": 0.5
+                }
+            }       
+        }
+}

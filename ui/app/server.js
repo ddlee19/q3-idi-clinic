@@ -13,16 +13,11 @@ app.use(express.urlencoded({ extended: false }));
 
 // Routing
 app.get('/', (req, res) => {
-  ApiClient.getMills().then(millsDict => {
+  ApiClient.getFoliumMap().then(mapHtml => {
     res.render('index', { 
       title: 'IDI Palm Oil Tracker', 
-      millsDictStr: JSON.stringify(millsDict)
+      mapHtml: mapHtml
     });
-  });
-})
-app.get('/folium-test', (req, res) => {
-  ApiClient.getFoliumMap().then(html => {
-    res.send(html);
   });
 })
 

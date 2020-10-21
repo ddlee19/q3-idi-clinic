@@ -26,5 +26,12 @@
  .pusher {
     height: 100%;
     align-self: auto;
-  } 
+  }
+
+  .pusher div:first-child div:first-child {
+    position: static !important;
+    width: 100%;
+    height: 100%;
+    padding-bottom: 0% !important;
+  }
   
