@@ -3,11 +3,12 @@ import ee
 import requests
 import pandas as pd
 
+
 def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--output',
-                        default = 'Mills_Treeloss_test.csv',
+                        default = 'Mills_Treeloss.csv',
                         help='Path of the output csv file')
 
     args = parser.parse_args()
@@ -50,7 +51,7 @@ def main():
     column_names = ["id", "Group_Name", "address", "alt_name", "cert", "country",
                     "globalid", "property_id", "latitude", "longitude", "mill_name",
                     "objectid", "prnt_comp", "rspo_model", "state", "sub_state",
-                    "treeloss_sum"]
+                    "geometry", "treeloss_sum"]
 
     mrows = []
 
@@ -73,6 +74,7 @@ def main():
             mill['properties']['rspo_model'],
             mill['properties']['state'],
             mill['properties']['sub_state'],
+            mill['geometry'],
             mill['properties']['sum'],
             ])
     mills_data = pd.DataFrame(columns = column_names, data = mrows)
