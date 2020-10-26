@@ -10,7 +10,7 @@ import requests
 import json
 
 from flask import Flask, jsonify, render_template, abort, make_response
-from app_util import build_mills_records
+from app_util import get_mills_records
 from log_util import logger
 
 from folium_demo import get_folium_html
@@ -20,9 +20,7 @@ MILLS_URL = "https://opendata.arcgis.com/datasets/5c026d553ff049a585b90c3b1d53d4
 app = Flask(__name__)
 config = {'host': os.environ.get('APP_HOST', '0.0.0.0'), 
           'port': os.environ.get("PORT", 5000)}
-mills_records = build_mills_records({},
-                                    MILLS_URL,
-                                    {'country': 'Indonesia'})
+mills_records = get_mills_records()
 
 
 @app.route("/api/v1.0/mills", methods=['GET'])
