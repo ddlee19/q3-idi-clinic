@@ -4,33 +4,94 @@
 # and computation processes.
 #
 ##
-
+import os
 
 import ee
 from google.auth.transport.requests import AuthorizedSession
 from google.oauth2 import service_account
 
-from data_util import build_consumer_data, build_mills_data
+from data_util import (build_uml_data, build_consumer_data)
+from log_util import logger
 
 PROJECT = 'idi-development'
 SERVICE_ACCOUNT = 'idi-service-acct-development@idi-development.iam.gserviceaccount.com'
 KEY = 'privatekey.json'
-
+OUTPUT_DIR = './output'
+INPUT_DIR = './input'
+MILLS_API_URL = "https://opendata.arcgis.com/datasets/5c026d553ff049a585b90c3b1d53d4f5_34.geojson"
+UML_QUERY = {'country': 'Indonesia'}
+OUTPUT_UML_FNAME = 'umls.json'
+OUTPUT_CONSUMER_FNAME = 'consumer.csv'
+INPUT_CONSUMER_FNAME = 'complete_match_update.tsv'
+OUTPUT_BOUNDARIES_FNAME = 'boundaries.geojson'
 
 # Authenticate with the service account and initialize Earth Engine
 credentials = ee.ServiceAccountCredentials(SERVICE_ACCOUNT, KEY)
 ee.Initialize(credentials)
 session = AuthorizedSession(credentials)
 
-def load_consumer_data():
-    return build_consumer_data()
+def load_uml_data():
+    output_file_path = os.path.join(OUTPUT_DIR, OUTPUT_UML_FNAME)
+    return build_uml_data(output_file_path, MILLS_API_URL, UML_QUERY)
 
-def load_mills_data():
-    return build_mills_data()
+def load_consumer_data():
+    input_file_path = os.path.join(INPUT_DIR, INPUT_CONSUMER_FNAME)
+    output_file_path = os.path.join(OUTPUT_DIR, OUTPUT_CONSUMER_FNAME)
+    return build_consumer_data(input_file_path, output_file_path)
+
+def load_uml_boundaries_data():
+    pass
+
+def load_uml_loss_data():
+    pass
+
+def load_uml_risk_data():
+    pass
+
+def load_big_table():
+    pass
+
+def generate_consumer_aggregations(table):
+    pass
 
 if __name__ == '__main__':
-    c_df = load_consumer_data()
-    m_df = load_mills_data()
-    print(c_df.shape, m_df.shape)
+    try:
+        os.mkdir(OUTPUT_DIR)
+    except FileExistsError:
+        logger.info('Output directory already exists.')
+
+    uml_df = load_uml_data()
+    logger.info("UML data shape: %s" % str(uml_df.shape))
+
+    consumer_df = load_consumer_data()
+    logger.info("Consumer data shape: %s" % str(consumer_df.shape))
+
+    ## TODO AMANDA: input: umls.json, output: boundaries.geojson
+    # This code should read the output/umls.json file, use EE to
+    # calculate the polygon shapes (and probably water/land/intersection areas
+    # when available), then write the output to geojson. Return geopandas df
+    # with UML ID, lat/lon, and polygon shapes.
+    uml_boundaries_geodf = load_uml_boundaries_data()
+
+    ## TODO AMANDA: input: boundaries.geojson, output: loss.csv
+    # This code reads in the boundaries file, then computes yearly tree cover
+    # loss with EE. The result shows uml_id with loss for each year in columns
+    uml_loss_by_year_df = load_uml_loss_data()
+
+    ## TODO AMANDA: input: loss.csv, output: risk.csv
+    # This code reads in the loss file, then generates risk scores. The output
+    # is a taable of uml_id as the index, and columns for corresponding scores
+    uml_risk_df = load_uml_risk_data()
+
+    ## TODO TIM: input: all of the above, output bigtable for aggregations
+    # This code reads in and merges the output from above to create the big table used for aggregaations
+    big_table_df = load_big_table()
+
+    ## TODO TIM: input: all of the above, output bigtable for aggregations
+    # This code reads in and merges the output from above to create the big table used for aggregaations
+    generate_consumer_aggregations(big_table_df)
+
+
+
 
 

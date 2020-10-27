@@ -31,14 +31,12 @@ def write_json(mills, path):
 
 """Stores consumer data locally
 """
-def write_df(df, path):
+def write_df(df, path, index):
     try:
         os.mkdir('output')
     except FileExistsError:
         pass
 
-    df.to_csv(path)
-    # with open(path, 'w') as f:
-        # f.write(json.dumps(mills))
+    df.to_csv(path, index=index)
 
     logger.info('Completed writing %s' % path)
