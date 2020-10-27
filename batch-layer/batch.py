@@ -10,7 +10,7 @@ import ee
 from google.auth.transport.requests import AuthorizedSession
 from google.oauth2 import service_account
 
-from data_util import (build_uml_data, build_consumer_data)
+from data_util import (build_uml_data, build_brand_data)
 from log_util import logger
 
 PROJECT = 'idi-development'
@@ -21,8 +21,8 @@ INPUT_DIR = './input'
 MILLS_API_URL = "https://opendata.arcgis.com/datasets/5c026d553ff049a585b90c3b1d53d4f5_34.geojson"
 UML_QUERY = {'country': 'Indonesia'}
 OUTPUT_UML_FNAME = 'umls.json'
-OUTPUT_CONSUMER_FNAME = 'consumer.csv'
-INPUT_CONSUMER_FNAME = 'complete_match_update.tsv'
+OUTPUT_BRAND_FNAME = 'brands.csv'
+INPUT_BRAND_FNAME = 'complete_match_update.tsv'
 OUTPUT_BOUNDARIES_FNAME = 'boundaries.geojson'
 
 # Authenticate with the service account and initialize Earth Engine
@@ -30,14 +30,18 @@ credentials = ee.ServiceAccountCredentials(SERVICE_ACCOUNT, KEY)
 ee.Initialize(credentials)
 session = AuthorizedSession(credentials)
 
+"""Builds UML data from API
+"""
 def load_uml_data():
     output_file_path = os.path.join(OUTPUT_DIR, OUTPUT_UML_FNAME)
     return build_uml_data(output_file_path, MILLS_API_URL, UML_QUERY)
 
-def load_consumer_data():
-    input_file_path = os.path.join(INPUT_DIR, INPUT_CONSUMER_FNAME)
-    output_file_path = os.path.join(OUTPUT_DIR, OUTPUT_CONSUMER_FNAME)
-    return build_consumer_data(input_file_path, output_file_path)
+"""Fetch brand data from TSV
+"""
+def load_brand_data():
+    input_file_path = os.path.join(INPUT_DIR, INPUT_BRAND_FNAME)
+    output_file_path = os.path.join(OUTPUT_DIR, OUTPUT_BRAND_FNAME)
+    return build_brand_data(input_file_path, output_file_path)
 
 def load_uml_boundaries_data():
     pass
@@ -51,7 +55,7 @@ def load_uml_risk_data():
 def load_big_table():
     pass
 
-def generate_consumer_aggregations(table):
+def generate_aggregations(table):
     pass
 
 if __name__ == '__main__':
@@ -63,8 +67,8 @@ if __name__ == '__main__':
     uml_df = load_uml_data()
     logger.info("UML data shape: %s" % str(uml_df.shape))
 
-    consumer_df = load_consumer_data()
-    logger.info("Consumer data shape: %s" % str(consumer_df.shape))
+    brand_df = load_brand_data()
+    logger.info("Brand data shape: %s" % str(brand_df.shape))
 
     ## TODO AMANDA: input: umls.json, output: boundaries.geojson
     # This code should read the output/umls.json file, use EE to
@@ -89,7 +93,7 @@ if __name__ == '__main__':
 
     ## TODO TIM: input: all of the above, output bigtable for aggregations
     # This code reads in and merges the output from above to create the big table used for aggregaations
-    generate_consumer_aggregations(big_table_df)
+    generate_aggregations(big_table_df)
 
 
 

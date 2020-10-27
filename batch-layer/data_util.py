@@ -15,7 +15,7 @@ from storage_util import write_json, write_df
 
 
 
-"""Builds UML json data from API
+"""Builds json data from API
 """
 def build_uml_data(output_path, mills_api_url, request_params):
     res = {}
@@ -53,26 +53,29 @@ def build_uml_data(output_path, mills_api_url, request_params):
     return pd.DataFrame.from_dict(res, orient='index') 
 
 
-"""Fetch consumer brand data from TSV
+"""Fetch brand data from TSV
 """
-def build_consumer_data(input_path, output_path):
+def build_brand_data(input_path, output_path):
     res = None
     if os.path.exists(output_path):
         res = pd.read_csv(output_path)
-        logger.info("Reading consumer data from local CSV file.")
+        logger.info("Reading brand data from local CSV file.")
     else:
-        logger.info("Started parsing consumer data from TSV.")
+        logger.info("Started parsing brand data from TSV.")
         df = pd.read_csv(input_path, sep='\t')
 
         # Drop mills not on in indonesia or null rows
         df = df[df['Country'].notnull()]
         df = df[df['Country'] == 'indonesia']
+
         # Keep wanted columns
-        
         df = df[['idx','UMLID', 'Consumer Company', 'Mill Name', 'Mill Company', 'Parent Company', 'Province', 'District','Latitude', 'Longitude', 'RSPO']]
+
         # Rename columns
-        mapper = {'UMLID': 'umlid',
-                'Consumer Company': 'consumer_company',
+        mapper = {
+                'idx': 'idx',
+                'UMLID': 'umlid',
+                'Consumer Company': 'brand',
                 'Mill Name': 'mill_name',
                 'Mill Company': 'mill_co',
                 'Parent Company': 'parent_co',
@@ -81,10 +84,27 @@ def build_consumer_data(input_path, output_path):
                 'Latitude': 'lat',
                 'Longitude': 'long',
                 'RSPO': 'rspo'}
-        res = df.rename(columns=mapper)
-        res = res.reset_index(drop=True)
+        df = df.rename(columns=mapper)
+        df.reset_index(drop=True, inplace=True)
 
+        # Create df1 where each row has a company and mill idx
+        df1 = df[df['brand'].notnull()].loc[:,['idx', 'brand']]
+
+        # Create df2 where each row has a uml and mill idx, mill info
+        df2 = df[df['umlid'].notnull()]
+
+        # Merge and filter unique id/company tuples
+        dfm = df1.merge(df2, on='idx', how='left')
+        dfm = dfm[(dfm['brand_x'].notnull()) & (dfm['umlid'].notnull())]
+
+        # Clean up merged dataset
+        dfm.reset_index(drop=True, inplace=True)
+        dfm.drop_duplicates(subset=['brand_x', 'umlid'], inplace=True)
+        dfm.drop(columns=['brand_y'], inplace=True)
+        dfm.rename(columns={'brand_x': 'brand'}, inplace=True)
+
+        res = dfm
         write_df(res, output_path, index=False)
-    
+
     return res
 
