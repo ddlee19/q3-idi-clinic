@@ -143,3 +143,48 @@ def build_uml_loss_data(input_file_path, output_file_path, area_factor = 1):
 
 
     return mill_loss_data
+
+
+def build_uml_risk_data(input_file_path, output_file_path, years = [2018, 2019]):
+    risk_df = None
+    if os.path.exists(output_file_path):
+        risk_df = pd.read_csv(output_file_path)
+        logger.info("Reading UML risk data from local csv file.")
+        pass
+    else:
+        logger.info("Started reading mill loss data from csv.")
+        try:
+            loss_df = pd.read_csv(input_file_path)
+
+            # Create a new column that is the mean treeloss for specified years.
+            mean_col = 'mean_loss_'
+            for year in years:
+                mean_col += str(year)
+
+            col_list = ['treeloss_' + str(year) for year in years]
+            loss_df[mean_col] = loss_df.loc[:, col_list].mean(axis=1)
+
+            # Create a new column that is the z-score for the mean treeloss.
+            z_col = mean_col + "_z"
+            mu = loss_df[mean_col].mean()
+            sd = loss_df[mean_col].std()
+            loss_df[z_col] = (loss_df[mean_col] - mu)/sd
+
+            # Convert z-score to risk (1-5)
+            loss_df['risk_score'] = 5*(loss_df[z_col] > 1) + \
+                  4*(loss_df[z_col].between(0.5, 1)) + \
+                  3*(loss_df[z_col].between(-0.5, 0.5)) + \
+                  2*(loss_df[z_col].between(-1, -0.5)) + \
+                  1*(loss_df[z_col] < -1)
+
+            # risk_df includes UMLid and risk_score columns only
+            risk_df = loss_df.loc[:, ['UMLid', 'risk_score']]
+
+            # Write out risk_df to CSV
+            write_df(risk_df, output_file_path, index = False)
+
+        except Exception as e:
+            print(e)
+            logger.error("Failed to compute risk.")
+
+    return risk_df

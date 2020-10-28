@@ -81,7 +81,6 @@ def main():
 
     # Compute cumulative tree cover loss per mill area per year
     # Add a column to the data frame for each year.
-    firstMillLosses = {}
     lossyears = list(range(1, 20))
 
     for year in lossyears:
