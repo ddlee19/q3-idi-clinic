@@ -13,6 +13,8 @@ from google.oauth2 import service_account
 from data_util import (build_uml_data, build_brand_data)
 from log_util import logger
 
+from data_util_a import build_uml_boundaries_data
+
 PROJECT = 'idi-development'
 SERVICE_ACCOUNT = 'idi-service-acct-development@idi-development.iam.gserviceaccount.com'
 KEY = 'privatekey.json'
@@ -24,6 +26,7 @@ OUTPUT_UML_FNAME = 'umls.json'
 OUTPUT_BRAND_FNAME = 'brands.csv'
 INPUT_BRAND_FNAME = 'complete_match_update.tsv'
 OUTPUT_BOUNDARIES_FNAME = 'boundaries.geojson'
+MILL_RADIUS_IN_M = 50000
 
 # Authenticate with the service account and initialize Earth Engine
 credentials = ee.ServiceAccountCredentials(SERVICE_ACCOUNT, KEY)
@@ -44,7 +47,10 @@ def load_brand_data():
     return build_brand_data(input_file_path, output_file_path)
 
 def load_uml_boundaries_data():
-    pass
+    input_file_path = os.path.join(OUTPUT_DIR, OUTPUT_UML_FNAME)
+    output_file_path = os.path.join(OUTPUT_DIR, OUTPUT_BOUNDARIES_FNAME)
+    radius = MILL_RADIUS_IN_M
+    return build_uml_boundaries_data(input_file_path, output_file_path, radius)
 
 def load_uml_loss_data():
     pass
@@ -76,6 +82,7 @@ if __name__ == '__main__':
     # when available), then write the output to geojson. Return geopandas df
     # with UML ID, lat/lon, and polygon shapes.
     uml_boundaries_geodf = load_uml_boundaries_data()
+    logger.info("UML boundaries data shape: %s" % str(uml_boundaries_geodf.shape))
 
     ## TODO AMANDA: input: boundaries.geojson, output: loss.csv
     # This code reads in the boundaries file, then computes yearly tree cover
@@ -94,8 +101,3 @@ if __name__ == '__main__':
     ## TODO TIM: input: all of the above, output bigtable for aggregations
     # This code reads in and merges the output from above to create the big table used for aggregaations
     generate_aggregations(big_table_df)
-
-
-
-
-
