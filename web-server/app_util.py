@@ -15,6 +15,20 @@ from db_util import persist_mills_data
 from google.auth.transport.requests import AuthorizedSession
 from google.oauth2 import service_account
 
+MILLS_PATH = './data/mills.json'
+
+"""Fetch mills data from local file storage. This data is held in memory.
+"""
+def get_mills_records():
+
+    if os.path.exists(MILLS_PATH):
+        logger.info("Reading mills from local JSON file.")
+        with open(MILLS_PATH, 'r') as f:
+            return json.load(f)
+    else:
+        logger.error("Missing mills data.")
+        abort(404)
+        
 
 def authenticate_to_ee():
     '''
