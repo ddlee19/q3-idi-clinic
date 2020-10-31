@@ -4,19 +4,19 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
-import { MapComponent } from './map/map.component';
-import { NavComponent } from './nav/nav.component';
-import { AggregateBrandStatsComponent } from './aggregate-brand-stats/aggregate-brand-stats.component';
-import { BrandAggTreeLossChartComponent } from './brand-agg-tree-loss-chart/brand-agg-tree-loss-chart.component';
-import { BrandFilterComponent } from './brand-filter/brand-filter.component';
-import { BrandComponent } from './brand/brand.component';
+import { MapComponent } from './components/map/map.component';
+import { NavComponent } from './components/nav/nav.component';
+import { BrandAggregateStatsComponent } from './components/brand-aggregate-stats/brand-aggregate-stats.component';
+import { BrandAggTreeLossChartComponent } from './components/brand-agg-tree-loss-chart/brand-agg-tree-loss-chart.component';
+import { BrandFilterComponent } from './components/brand-filter/brand-filter.component';
+import { BrandComponent } from './components/brand/brand.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MapComponent,
     NavComponent,
-    AggregateBrandStatsComponent,
+    BrandAggregateStatsComponent,
     BrandAggTreeLossChartComponent,
     BrandFilterComponent,
     BrandComponent

@@ -15,6 +15,7 @@ from db_util import persist_mills_data
 from google.auth.transport.requests import AuthorizedSession
 from google.oauth2 import service_account
 
+
 def authenticate_to_ee():
     '''
     Authenticates to Google Earth Engine (GEE) using a Google Cloud Platform
@@ -27,6 +28,9 @@ def authenticate_to_ee():
 
 
 def add_mill_radii(mills):
+    '''
+    Generates GeoJSON geometries for the radii around the mills.
+    '''
     radius_in_km = 50
     km_to_m = 1000
     mill_areas = ee.FeatureCollection(mills, "geometry").map(lambda mill: mill.buffer(radius_in_km * km_to_m))
@@ -59,6 +63,7 @@ def build_mills_records(mills_dict, remote_endpoint, query_params):
         mill_features = add_mill_radii(mills)["features"]
 
         # Extract mills properties from response JSON and save to dictionary
+        # while adding new properties for testing
         for mf in mill_features:
             if mf["properties"]["country"] in query_params['country']:
                 mf["properties"]["relative_score"] = random.gauss(0, 1)
@@ -74,17 +79,27 @@ def build_mills_records(mills_dict, remote_endpoint, query_params):
 
 
 def parse_brand_aggregations():
+    '''
+    Parses a JSON file to return mock consumer brand aggregation statistics.
+    '''
     if os.path.exists('./temp/brand_agg.json'):
         with open('./temp/brand_agg.json', 'r') as f:
             return json.load(f)
 
 
 def parse_brand_filters():
+    '''
+    Parses a JSON file to return mock consumer brand filter data.
+    '''
     if os.path.exists('./temp/brand_filters.json'):
         with open('./temp/brand_filters.json', 'r') as f:
             return json.load(f)
 
+
 def parse_brand_records():
+    '''
+    Parses a JSON file to return mock consumer brand records.
+    '''
     if os.path.exists('./temp/brands.json'):
         with open('./temp/brands.json', 'r') as f:
             return json.load(f)

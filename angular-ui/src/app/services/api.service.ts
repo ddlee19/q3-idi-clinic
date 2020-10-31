@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { TileUrl } from '../interfaces/tileurls.interface';
+import { HttpClient } from '@angular/common/http';
+import { TileUrl } from '../interfaces/tile-urls.interface';
 import { Mill } from '../interfaces/mill.interface';
-import { AggregateBrandStats } from '../interfaces/brand-stats.interface';
+import { BrandAggregateStats } from '../interfaces/brand-stats.interface';
 import { BrandFilter } from '../interfaces/brand-filter.interface';
 import { Brand } from '../interfaces/brand.interface';
 
@@ -23,8 +23,8 @@ export class ApiService {
   }
 
   /** GET aggregate consumer brand statistics from the server */
-  getAggregateBrandData(): Promise<AggregateBrandStats> {
-      return this.http.get<AggregateBrandStats>(this.apiBase + "brands/stats").toPromise();
+  getAggregateBrandData(): Promise<BrandAggregateStats> {
+      return this.http.get<BrandAggregateStats>(this.apiBase + "brands/stats").toPromise();
   }
 
   /** GET brand filter choices from the server */

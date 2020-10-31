@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ApiService } from '../services/api.service'
-import { BrandFilter } from '../interfaces/brand-filter.interface';
+import { ApiService } from '../../services/api.service'
+import { BrandFilter } from '../../interfaces/brand-filter.interface';
 
 
 @Component({

@@ -1,0 +1,100 @@
+{
+    "totalNumCountries": 2,
+    "totalNumConsumerBrands": 89,
+    "totalNumSuppliers": 240,
+    "totalNumMills": 1230,
+    "netTreeLoss": 20890352,
+    "totalTreeLossByYear":{
+        "2002": 113343,
+        "2003": 298456,
+        "2004": 117875,
+        "2005": 363667,
+        "2006": 356737,
+        "2007": 274879,
+        "2008": 234636,
+        "2009": 487987,
+        "2010": 789873,
+        "2011": 890483,
+        "2012": 903940,
+        "2013": 1287584,
+        "2014": 1557987,
+        "2015": 2098409,
+        "2016": 2893893,
+        "2017": 2797373,
+        "2018": 2908094,
+        "2019": 2589798
+    },
+    "totalTreeGainByYear":{
+        "2002": 1343,
+        "2003": 3134,
+        "2004": 8164,
+        "2005": 8792,
+        "2006": 1341,
+        "2007": 3425,
+        "2008": 4534,
+        "2009": 4253,
+        "2010": 3565,
+        "2011": 3456,
+        "2012": 4423,
+        "2013": 3452,
+        "2014": 2345,
+        "2015": 2425,
+        "2016": 4543,
+        "2017": 3454,
+        "2018": 5464,
+        "2019": 6549
+    },
+    "topBrands": [
+        {
+            "brandId": 1,
+            "name": "PepsiCo",
+            "country": "United States",
+            "category": "Consumer Goods Manufacturer",
+            "absoluteScore": 5,
+            "totalHectaresLost": 400
+        },
+        {
+            "brandId": 2,
+            "name": "Proctor & Gamble",
+            "country": "United States",
+            "category": "Consumer Goods Manufacturer",
+            "absoluteScore": 5,
+            "totalHectaresLost": 790
+
+        },
+        {
+            "brandId": 3,
+            "name": "McDonald's Corporation",
+            "country": "United States",
+            "category": "Retail",
+            "absoluteScore": 4,
+            "totalHectaresLost": 970
+        }
+    ],
+    "bottomBrands": [
+        {
+            "brandId": 4,
+            "name": "Walmart Inc",
+            "country": "United States",
+            "category": "Retail",
+            "absoluteScore": 1,
+            "totalHectaresLost": 134340
+        },
+        {
+            "brandId": 5,
+            "name": "General Mills, Inc",
+            "country": "United States",
+            "category": "Consumer Goods Manufacturer",
+            "absoluteScore": 1,
+            "totalHectaresLost": 23980
+        },
+        {
+            "brandId": 6,
+            "name": "Safeway, Inc",
+            "country": "United States",
+            "category": "Retail",
+            "absoluteScore": 2,
+            "totalHectaresLost": 13450
+        }
+    ]
+}

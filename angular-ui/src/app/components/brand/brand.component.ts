@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
-import { ApiService } from '../services/api.service'
-import { Brand } from '../interfaces/brand.interface';
+import { ApiService } from '../../services/api.service'
+import { Brand } from '../../interfaces/brand.interface';
 
 
 @Component({

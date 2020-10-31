@@ -1,4 +1,9 @@
-export interface AggregateBrandStats {
+import { BrandRank } from './brand-rank.interface';
+
+/**
+ * Reports statistics calculated across all consumer brands.
+*/
+export interface BrandAggregateStats {
     totalNumCountries: number;
     totalNumConsumerBrands: number;
     totalNumSuppliers: number;
@@ -8,13 +13,4 @@ export interface AggregateBrandStats {
     totalTreeGainByYear: object;
     topBrands: BrandRank[];
     bottomBrands: BrandRank[];
-}
-
-export interface BrandRank {
-    brandId: number,
-    name: string,
-    country: string,
-    category: string,
-    absoluteScore: number,
-    totalHectaresLost: number
 }

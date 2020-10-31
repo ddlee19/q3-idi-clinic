@@ -78,8 +78,8 @@ target/
 # node modules
 *node_modules/
 
-# temp folder
-*temp/
+# mills.json in temp folder
+web-server/temp/mills.json
 
 ### EOF
 

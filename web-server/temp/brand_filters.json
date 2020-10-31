@@ -1,0 +1,77 @@
+[
+    {
+        "id": 1,
+        "brandName": "Walmart",
+        "brandCountry": "United States"
+    },
+    {
+        "id": 2,
+        "brandName": "Kellog's",
+        "brandCountry": "United States"
+    },
+    {
+        "id": 3,
+        "brandName": "PepsiCo",
+        "brandCountry": "United States"
+    },
+    {
+        "id": 4,
+        "brandName": "Proctor & Gamble",
+        "brandCountry": "United States"
+    },
+    {
+        "id": 5,
+        "brandName": "McDonald's Cororation",
+        "brandCountry": "United States"
+    },
+    {
+        "id": 6,
+        "brandName": "Krispy Creme Donuts",
+        "brandCountry": "United States"
+    },
+    {
+        "id": 7,
+        "brandName": "WAFFELMAN S.R.L.",
+        "brandCountry": "Italy"
+    },
+    {
+        "id": 8,
+        "brandName": "Corporativo Bimbo S.A. de C.V",
+        "brandCountry": "Mexico"
+    },
+    {
+        "id": 9,
+        "brandName": "Lilly's Cakes NV",
+        "brandCountry": "Belgium"
+    },
+    {
+        "id": 10,
+        "brandName": "Cheerio's",
+        "brandCountry": "United States"
+    },
+    {
+        "id": 11,
+        "brandName": "Abu Dhabi Vegetable Oil Company LLC",
+        "brandCountry": "United Arab Emirates"
+    },
+    {
+        "id": 12,
+        "brandName": "Johnson & Johnson",
+        "brandCountry": "United States"
+    },
+    {
+        "id": 13,
+        "brandName": "General Mills, Inc",
+        "brandCountry": "United States"
+    },
+    {
+        "id": 14,
+        "brandName": "Safeway, Inc",
+        "brandCountry": "United States"
+    },
+    {
+        "id": 15,
+        "brandName": "Bradford Soap Works",
+        "brandCountry": "United States"
+    }
+]

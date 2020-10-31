@@ -13,7 +13,7 @@ from flask import Flask, jsonify, render_template, abort, make_response
 from flask_cors import CORS, cross_origin
 from app_util import build_mills_records, parse_brand_aggregations, parse_brand_filters, parse_brand_records
 from log_util import logger
-from folium_map.map_builder import get_folium_map, get_tile_urls
+from map_util.map_builder import get_folium_map, get_tile_urls
 
 MILLS_URL = "https://opendata.arcgis.com/datasets/5c026d553ff049a585b90c3b1d53d4f5_34.geojson"
 

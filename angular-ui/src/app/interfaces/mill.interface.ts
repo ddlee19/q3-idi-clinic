@@ -1,3 +1,6 @@
+/**
+ * A detailed represenation of a palm oil mill. 
+*/
 export interface Mill {
     properties: MillProperties;
     geometry: object;
@@ -5,6 +8,9 @@ export interface Mill {
     type: string;
 }
 
+/**
+ * The properties associated with a mill.
+*/
 export interface MillProperties {
     objectid: number;
     mill_name: string;

@@ -18,7 +18,11 @@ def authenticate_to_ee():
 
 
 def get_tile_url(ee_image, vis_params):
+    '''
+    Generates a tile url for a GEE image.
+    '''
     return ee_image.getMapId(vis_params)["tile_fetcher"].url_format
+
 
 def create_layer_from_ee_img(
     ee_image, 
@@ -75,7 +79,6 @@ def add_mills_markers_to_map(folium_map, mills_records):
     '''
     Adds mills markers to the map as a FeatureGroup layer.
     '''
-
     feature_group_layer = folium.map.FeatureGroup("mills")
     for _, mill in mills_records.items():
         folium.map.Marker(
