@@ -1,0 +1,92 @@
+<ng-container *ngIf="selectedBrand != null">
+    <div id="brand" class="ui inverted sidebar very wide right vertical visible menu">
+        <div>
+            <a id="brand-close" (click)="closeBrand()"><i class="close small fitted inverted red bordered link icon"></i></a>
+        </div>
+        <div class="ui large inverted header center aligned">
+            {{brand.name}}
+            <h4>{{brand.country}}</h4>
+        </div>
+        <div class="ui divider"></div>
+        <div class="item">
+            <p>
+                {{brand.description}}
+                <a href="{{brand.externalLink}}" target="_blank">
+                    <i class="icon small blue inverted external alternate link"></i>
+                </a>
+            </p>
+        </div>
+        <br/>
+        <div class="ui center aligned one column grid">
+            <div class="sixteen wide column">
+                <div class="ui small inverted header center aligned">Stats</div>
+                <div class="ui inverted orange statistics center aligned">
+                    <div class="statistic">
+                      <div class="value">{{brand.weightedAvgScore}}</div>
+                      <div class="label">
+                          Absolute Deforestation Score
+                          <i class="info icon link inverted circular blue"></i>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+                <div class="ui three tiny inverted statistics">
+                    <div class="ui statistic">
+                        <div class="value">{{ 1 | number}}</div>
+                        <div class="label">Country</div>
+                    </div>
+                    <div class="ui statistic">
+                        <div class="value">{{brand.suppliers.length | number}}</div>
+                        <div class="label">Suppliers</div>
+                    </div>
+                    <div class="ui statistic">
+                        <div class="value">{{brand.mills.length | number}}</div>
+                        <div class="label">Mills</div>
+                    </div>
+                </div>
+                <div class="ui small inverted header center aligned">Supplier Partners</div>
+                <div id="suppliers">
+                    <table class="ui small single line selectable inverted celled table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Name</th>
+                                <th>Country</th>
+                            </tr>
+                        </thead>
+                        <tr *ngFor="let supplier of brand.suppliers; let i = index">
+                            <td>{{i+1}}</td>
+                            <td>{{supplier.name}}</td>
+                            <td>{{supplier.country}}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="ui small inverted header center aligned">Mills</div>
+                <div id="mills">
+                    <table class="ui small single line selectable inverted celled very compact table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Name</th>
+                                <th>Score</th>
+                                <th>Country</th>
+                                <th>State</th>
+                                <th>Sub-State</th>
+                                <th>Parent Group</th>
+                            </tr>
+                        </thead>
+                        <tr *ngFor="let mill of brand.mills; let i = index">
+                            <td>{{i+1}}</td>
+                            <td>{{mill.properties.mill_name}}</td>
+                            <td>{{mill.properties.absolute_score}}</td>
+                            <td>{{mill.properties.country}}</td>
+                            <td>{{mill.properties.state}}</td>
+                            <td>{{mill.properties.sub_state}}</td>
+                            <td>{{mill.properties.Group_Name}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-container>

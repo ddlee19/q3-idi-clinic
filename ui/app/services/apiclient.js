@@ -9,6 +9,11 @@ class ApiClient {
         return jsonBody['mills'];
     }
 
+    static async getResourcesUponLoad(){
+        let jsonBody = await ApiClient.get(api_base + "/load-up");
+        return jsonBody;
+    }
+
     static async getFoliumMap(){
         let jsonBody = await ApiClient.get(api_base + "/folium-map");
         return jsonBody['html'];

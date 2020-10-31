@@ -1,0 +1,26 @@
+<ng-container *ngIf="showNav">
+  <div id="navbar" class="ui sidebar mini inverted visible vertical menu">
+    <div>
+      <img class="ui center aligned image" id="logo" src="../assets/images/idiLogo.jpg">
+      <div id="navtitle" class="ui medium header center aligned inverted gray">
+        PALM OIL MILL TRACKER
+        <div>
+          <br/>
+          <a><i class="info circle large inverted link icon"></i></a>
+          <a><i class="envelope large inverted link icon"></i></a>
+        </div>
+      </div>
+      <div id="navlinks" class="ui small header center aligned inverted gray" style="margin-top: 0px;">
+        <div>
+          <a (click)="openFilter('brands')"><i class="industry big blue circular inverted link icon"></i><br/>BRANDS</a>
+        </div>
+        <div>
+          <a><i class="globe big green circular inverted link icon"></i><br/>REGION</a>
+        </div>
+        <div>
+          <a><i class="leaf big pink circular inverted link icon"></i><br/>MILLS</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

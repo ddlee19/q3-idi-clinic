@@ -1,26 +1,24 @@
 <div class="ui sidebar mini inverted visible vertical menu" id="navbar">
-
   <div class="item">
-    <img class="ui mini image" id="logo" src="/images/logo.png">
-  </div>
-
-    <div class = "item">
-      <div class="header">Filters</div>
-        <div class="menu">
-          <a class="item">Placeholder Slider</a>
-          <a class="item">Placeholder 2</a>
-        </div> 
-    </div> 
-
-    <div class = "item">
-      <div class="header">About Page</div>
-        <div class="menu">
-          <a class="item">About Us</a>
-          <a class="item">Contact Us</a>
-        </div>  
+    <img class="ui center aligned image" id="logo" src="/images/idi_logo.jpg">
+    <div class="ui medium header center aligned inverted gray">
+      PALM OIL MILL TRACKER
     </div>
-
+    <div class="ui small header center aligned inverted gray" style="margin-top: 0px;">
+      <a>ABOUT</a><br/>
+      <a>CONTACT</a>
+    </div>
   </div>
+  <div class = "item">
+    <div class="ui small header center aligned inverted gray">
+      <i class="small fitted filter icon"></i> FILTER MAP</div>
+      <div class="menu">
+        <a class="item">
+          <%- include('filters.ejs') %>
+        </a>
+      </div> 
+  </div> 
+</div>
   <!-- <div class="ui modal">
       <div class="header">About</div>
       <div class="content">

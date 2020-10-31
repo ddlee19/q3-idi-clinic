@@ -13,12 +13,12 @@
     width: 100%;
   } */
 
-  /* #logo {
-    height: 150px;
-    width 45px;
-  } */
+  #logo {
+    margin: 0%;
+  }
   #navbar {
     z-index: 100000;
+    box-shadow: 8px 8px 18px #37393a;
   }
   .height {
     height: 100%;
@@ -26,12 +26,11 @@
  .pusher {
     height: 100%;
     align-self: auto;
+    margin: 0%;
+  } 
+  #web-container {
+    margin-top: 0%;
   }
-
-  .pusher div:first-child div:first-child {
-    position: static !important;
-    width: 100%;
-    height: 100%;
-    padding-bottom: 0% !important;
+  #map-container, #stats-container {
+    padding: 0%;
   }
-  

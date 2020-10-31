@@ -1,0 +1,73 @@
+<div id="brand-agg-stats" class="ui sidebar very wide right inverted vertical visible menu">
+    <div class="ui medium inverted header center aligned">Aggregate Consumer Brand Snapshot</div>
+    <div class="ui divider"></div>
+    <div class="ui center aligned one column grid">
+        <div class="sixteen wide column">
+            <div class="ui inverted statistics">
+                <div class="ui red inverted statistic">
+                    <div class="value">{{aggBrandStats.netTreeLoss | number}}</div>
+                    <div class="label">Hectares of Forest Lost</div>
+                </div>
+            </div>
+            <div class="ui tiny inverted statistics">
+                <div class="ui statistic">
+                    <div class="value">{{aggBrandStats.totalNumConsumerBrands | number}}</div>
+                    <div class="label">Brands</div>
+                </div>
+                <div class="ui statistic">
+                    <div class="value">{{aggBrandStats.totalNumCountries | number}}</div>
+                    <div class="label">Countries</div>
+                </div>
+            </div>
+            <div class="ui tiny inverted statistics">
+                <div class="ui statistic">
+                    <div class="value">{{aggBrandStats.totalNumSuppliers | number}}</div>
+                    <div class="label">Suppliers</div>
+                </div>
+                <div class="ui statistic">
+                    <div class="value">{{aggBrandStats.totalNumMills | number}}</div>
+                    <div class="label">Mills</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <app-brand-agg-tree-loss-chart [totalTreeLossByYear]="aggBrandStats.totalTreeLossByYear"></app-brand-agg-tree-loss-chart>
+    <div class="ui small inverted header center aligned">Highest Ranked Brands</div>
+    <div id="best-brands">
+        <table class="ui small single line selectable inverted celled table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Country</th>
+                    <th>Absolute Score</th>
+                </tr>
+            </thead>
+            <tr *ngFor="let brandRank of aggBrandStats.topBrands; let i = index">
+                <td>{{i+1}}</td>
+                <td>{{brandRank.name}}</td>
+                <td>{{brandRank.country}}</td>
+                <td>{{brandRank.absoluteScore}}</td>
+            </tr>
+        </table>
+    </div>
+    <div class="ui small inverted header center aligned">Lowest Ranked Brands</div>
+    <div id="bottom-brands">
+        <table class="ui small single line selectable inverted celled table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Country</th>
+                    <th>Absolute Score</th>
+                </tr>
+            </thead>
+            <tr *ngFor="let brandRank of aggBrandStats.bottomBrands; let i = index">
+                <td>{{aggBrandStats.totalNumConsumerBrands - i}}</td>
+                <td>{{brandRank.name}}</td>
+                <td>{{brandRank.country}}</td>
+                <td>{{brandRank.absoluteScore}}</td>
+            </tr>
+        </table>
+    </div>
+</div>

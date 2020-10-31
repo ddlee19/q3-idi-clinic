@@ -13,12 +13,19 @@ app.use(express.urlencoded({ extended: false }));
 
 // Routing
 app.get('/', (req, res) => {
-  ApiClient.getFoliumMap().then(mapHtml => {
-    res.render('index', { 
-      title: 'IDI Palm Oil Tracker', 
-      mapHtml: mapHtml
+  try {
+    ApiClient.getResourcesUponLoad().then(payload => {
+      res.render('index', { 
+        title: 'IDI Palm Oil Tracker', 
+        urlDict: JSON.stringify(payload["tile_urls"]),
+        millDict: JSON.stringify(payload["mill_dict"]),
+        brandAggs: payload["brand_aggs"]
+      });
     });
-  });
+  } catch (error) {
+    console.log("hello?")
+    console.log(error)
+  }
 })
 
 app.listen(port, () => {
