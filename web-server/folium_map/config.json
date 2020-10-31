@@ -18,7 +18,7 @@
                 }
             },
             "treecoverloss": {
-                "name": "treecover loss",
+                "name": "treecoverloss",
                 "min_zoom": 2,
                 "max_zoom": 16,
                 "visual_params":{

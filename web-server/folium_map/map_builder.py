@@ -17,6 +17,9 @@ def authenticate_to_ee():
     ee.Initialize(credentials)
 
 
+def get_tile_url(ee_image, vis_params):
+    return ee_image.getMapId(vis_params)["tile_fetcher"].url_format
+
 def create_layer_from_ee_img(
     ee_image, 
     name, 
@@ -44,25 +47,27 @@ def add_treeloss_layers_to_map(folium_map, gfc_image, attr, loss_params):
     Adds trecover losses for each year from 2001 to 2019 as separate
     layers on the map.
     '''
-    lossyears = list(range(1, 20))
+    loss_years = list(range(1, 20))
 
-    for year in lossyears:
-        lossyear = ee.List([year])
-        replacementValue = ee.List([1])
-        lossyearMask = gfc_image.remap(lossyear, 
-                                       replacementValue, 
+    for year in loss_years:
+        loss_year = ee.List([year])
+        replacement_value = ee.List([1])
+        loss_year_mask = gfc_image.remap(loss_year, 
+                                       replacement_value, 
                                        bandName="lossyear")
-        loss_img = gfc_image.mask(lossyearMask)
-        formattedYear = f"2{str(year).rjust(3, '0')}"
+        loss_img = gfc_image.mask(loss_year_mask)
+        formatted_year = f"2{str(year).rjust(3, '0')}"
+        layer_name = loss_params['name'] + f" {formatted_year}"
 
         loss_tilelayer = create_layer_from_ee_img(
             ee_image=loss_img, 
-            name=loss_params['name'] + f" {formattedYear}", 
+            name=layer_name, 
             vis_params=loss_params["visual_params"], 
             attribution=attr,
             min_zoom=loss_params["min_zoom"],
             max_zoom=loss_params["max_zoom"])
-
+        
+        loss_tilelayer._id = layer_name
         loss_tilelayer.add_to(folium_map)
 
 
@@ -89,6 +94,56 @@ def add_mills_markers_to_map(folium_map, mills_records):
         ).add_to(feature_group_layer)
 
     feature_group_layer.add_to(folium_map)
+
+
+def get_tile_urls():
+    # Authenticate
+    authenticate_to_ee()
+
+    # Parse map configuration settings
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    f = open(f"{dir_path}/config.json")
+    map_config = json.load(f)
+    f.close()
+
+    # Get Google Earth Engine image
+    gfc_img = ee.Image(map_config["gee_image"])
+    gfc_img_masked = gfc_img.updateMask(gfc_img)
+
+    # Initialize return payload
+    layer_urls = []
+
+    # Add url for treecover raster tile layer to dictionary
+    treecover_params = map_config["layers"]["treecover2000"]
+    treecover_url = get_tile_url(gfc_img_masked, treecover_params["visual_params"])
+    layer_urls.append(
+        { 
+            "tileSetName": treecover_params["name"],
+            "tileUrl": treecover_url 
+        })
+
+    # Add urls for treecover loss years to dictionary
+    loss_years = list(range(1, 20))
+    loss_params = map_config["layers"]["treecoverloss"]
+
+    for year in loss_years:
+        loss_year = ee.List([year])
+        replacement_value = ee.List([1])
+        loss_year_mask = gfc_img_masked.remap(loss_year, 
+                                       replacement_value, 
+                                       bandName="lossyear")
+        loss_img = gfc_img_masked.mask(loss_year_mask)
+        formatted_year = f"2{str(year).rjust(3, '0')}"
+        layer_name = loss_params['name'] + f" {formatted_year}"
+
+        loss_tilelayer_url = get_tile_url(loss_img, loss_params["visual_params"])
+        layer_urls.append(
+            { 
+                "tileSetName": layer_name,
+                "tileUrl": loss_tilelayer_url 
+            })
+
+    return layer_urls
 
 
 def get_folium_map(mills_records):
@@ -126,6 +181,7 @@ def get_folium_map(mills_records):
         min_zoom=treecover_params["min_zoom"],
         max_zoom=treecover_params["max_zoom"])
 
+    treecover_tilelayer._id = treecover_params["name"]
     treecover_tilelayer.add_to(folium_map)
 
     # Add treecover losses from 2001-2019 to map
