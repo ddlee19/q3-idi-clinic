@@ -11,7 +11,6 @@ import ee
 import random
 from flask import abort
 from log_util import logger
-from db_util import persist_mills_data
 from google.auth.transport.requests import AuthorizedSession
 from google.oauth2 import service_account
 
@@ -85,7 +84,6 @@ def build_mills_records(mills_dict, remote_endpoint, query_params):
                 mf["properties"]["consumer_brand_id"] = random.randint(1, 15)
                 res[mf["properties"]["objectid"]] = mf
 
-        persist_mills_data(res)
         logger.info("Completed parsing mills from opendata API.")
 
     logger.info("Completed updating mills records.")
