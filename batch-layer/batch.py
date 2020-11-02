@@ -27,6 +27,7 @@ OUTPUT_UML_FNAME = 'umls.json'
 OUTPUT_BRAND_FNAME = 'brands.csv'
 INPUT_BRAND_FNAME = 'complete_match_update.tsv'
 OUTPUT_BOUNDARIES_FNAME = 'boundaries.geojson'
+MILL_AREAS_RES = 12
 GFC_DATASET_NAME = "UMD/hansen/global_forest_change_2019_v1_7"
 OUTPUT_LOSS_FNAME = 'loss.csv'
 MILL_RADIUS_IN_M = 50000
@@ -59,7 +60,8 @@ def load_uml_boundaries_data(uml_df):
     output_file_path = os.path.join(OUTPUT_DIR, OUTPUT_BOUNDARIES_FNAME)
     return build_uml_boundaries_data(output_file_path,
                                      uml_df,
-                                     MILL_RADIUS_IN_M)
+                                     MILL_RADIUS_IN_M,
+                                     MILL_AREAS_RES)
 
 """Builds loss data for each year 2001-2019
 """
