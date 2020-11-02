@@ -14,49 +14,50 @@ from log_util import logger
 """Compute mill boundaries.
 """
 
-def build_uml_boundaries_data(input_file_path, output_file_path, radius):
+def build_uml_boundaries_data(output_file_path, uml_df, radius):
 
     if os.path.exists(output_file_path):
-        mills_gdf = gpd.read_file(output_file_path)
+        uml_gdf = gpd.read_file(output_file_path)
         logger.info("Reading UML boundaries data from local geojson file.")
         pass
     else:
         logger.info("Started reading mills data from json.")
         try:
-            mills_df = pd.read_json(input_file_path, orient='index')
-
-            # Rename column for 'id' as 'UMLid'
-            mills_df.rename(columns={"id": "UMLid"}, inplace=True)
+            # Rename column for 'id' as 'umlid'
+            uml_df.rename(columns={"id": "umlid"}, inplace=True)
 
             # Convert to GeoDataFrame
-            mills_gdf = gpd.GeoDataFrame(
-                            mills_df[['UMLid', 'latitude', 'longitude']],
-                            geometry=gpd.points_from_xy(mills_df.longitude,
-                                                        mills_df.latitude))
+            uml_gdf = gpd.GeoDataFrame(
+                            uml_df[['umlid', 'latitude', 'longitude']],
+                            geometry=gpd.points_from_xy(uml_df.longitude,
+                                                        uml_df.latitude))
 
             # Set CRS initially to epsg:4326 (lat/lon in degrees)
-            mills_gdf.set_crs(epsg=4326, inplace=True)
+            uml_gdf.set_crs(epsg=4326, inplace=True)
 
             # Convert to CRS epsg:3395 (lat/lon in meters) and create buffer,
             # then convert back to CRS epsg:4326.
-            mills_gdf.to_crs('epsg:3395', inplace=True)
-            mills_gdf['geometry']= mills_gdf.buffer(radius)
-            mills_gdf.to_crs('epsg:4326', inplace=True)
+            uml_gdf.to_crs('epsg:3395', inplace=True)
+            uml_gdf['geometry']= uml_gdf.buffer(radius, resolution = 10)
+            uml_gdf.to_crs('epsg:4326', inplace=True)
 
             # Write geodataframe out to geojson
-            write_geojson(mills_gdf, output_file_path)
+            write_geojson(uml_gdf, output_file_path)
 
         except Exception as e:
             print(e)
             logger.error("Failed to read mills data from local json file.")
 
-    return mills_gdf
+    return uml_gdf
 
 
 """Use Google Earth Engine API to compute tree cover loss (from Hansen data)
 within mill boundaries each year from 2001 to 2019.
 """
-def build_uml_loss_data(input_file_path, output_file_path, area_factor = 1):
+def build_uml_loss_data(input_file_path,
+                        output_file_path,
+                        GFC_DATASET_NAME,
+                        area_factor = 1):
     mill_loss_data = None
     if os.path.exists(output_file_path):
         mill_loss_data = pd.read_csv(output_file_path)
@@ -64,6 +65,8 @@ def build_uml_loss_data(input_file_path, output_file_path, area_factor = 1):
         pass
     else:
         # Earth Engine Initialization
+
+
         try:
             ee.Initialize()
             logger.info("Earth Engine initialization complete.")
@@ -74,47 +77,47 @@ def build_uml_loss_data(input_file_path, output_file_path, area_factor = 1):
             ee.Initialize()
             logger.info("Earth Engine initialization complete.")
 
+
         try:
             logger.info("Loading GFC data.")
             # Load the Global Forest Change dataset as a GEE image
-            gfc_img = ee.Image("UMD/hansen/global_forest_change_2019_v1_7")
+            gfc_img = ee.Image(GFC_DATASET_NAME)
 
-            # Retrieve Indonesian mill data from API endpoint
-            r = requests.get("https://opendata.arcgis.com/datasets/5c026d553ff049a585b90c3b1d53d4f5_34.geojson?where=country%20%3D%20'Indonesia'")
-            mills = r.json()['features']
+            # Open geojson file and convert data to Earth Engine Feature
+            # Collection.
+            with open(input_file_path) as f:
+                data = json.load(f)
+            mills = data['features']
+            mill_areas = ee.FeatureCollection(mills)
 
-            # Create list of feature geometries consisting of circular areas
-            # around mills, with each having a radius of 50 km
-            radiusInKm = 50
-            kmToMetersConversionFactor = 1000
-            mill_areas = ee.FeatureCollection(mills, "geometry").map(
-                    lambda mill: mill.buffer(radiusInKm * kmToMetersConversionFactor))
-
-            # Compute cumulative tree cover loss per mill area across **all** lossyears
-            # NOTE: The resulting sum is a decimal number because a weighted reduction
-            # is performed:
+            # Compute cumulative tree cover loss per mill area across **all**
+            # lossyears
+            # NOTE: The resulting sum is a decimal number because a weighted
+            # reduction is performed:
             # https://developers.google.com/earth-engine/guides/reducers_weighting.
-            # The sum is a weighted aggregation of the bitmap property "loss," which is
-            # either 0 or 1, but one could calculate area by passing in an area conversion
-            # factor
-            logger.info("Computing tree cover loss.")
+            # The sum is a weighted aggregation of the bitmap property "loss,"
+            # which is either 0 or 1.
+            logger.info("Computing tree cover loss sum.")
             lossdict = gfc_img.select('loss').reduceRegions(
                 collection=mill_areas,
                 reducer=ee.Reducer.sum(),
                 scale=30
                 )
+            logger.info("Tree cover loss sum computation complete.")
 
             # Store mill info in a dataframe.
-            column_names = ["UMLid"]
+            column_names = ["umlid", "treeloss_sum"]
             mrows = []
 
             for mill in lossdict.getInfo()["features"]:
-                mrows.append([mill['properties']['id']])
+                mrows.append([mill['properties']['umlid'],
+                              area_factor*mill['properties']['sum']])
 
             mill_loss_data = pd.DataFrame(columns = column_names, data = mrows)
 
             # Compute cumulative tree cover loss per mill area per year
             # Add a column to the data frame for each year.
+            logger.info("Computing yearly tree cover loss.")
             lossyears = list(range(1, 20))
 
             for year in lossyears:
@@ -135,12 +138,14 @@ def build_uml_loss_data(input_file_path, output_file_path, area_factor = 1):
                     loss.append(area_factor*Mill['properties']['sum'])
 
                 mill_loss_data[col_name] = loss
-
+                logger.info("Tree cover loss computation for {} complete.".format(2000 + year))
+            logger.info("Yearly tree cover loss computation complete.")
+            logger.info("Writing tree cover loss data to file.")
             write_df(mill_loss_data, output_file_path, index = False)
+
         except Exception as e:
             print(e)
             logger.error("Failed to compute loss.")
-
 
     return mill_loss_data
 
@@ -178,7 +183,7 @@ def build_uml_risk_data(input_file_path, output_file_path, years = [2018, 2019])
                   1*(loss_df[z_col] < -1)
 
             # risk_df includes UMLid and risk_score columns only
-            risk_df = loss_df.loc[:, ['UMLid', 'risk_score']]
+            risk_df = loss_df.loc[:, ['umlid', 'risk_score']]
 
             # Write out risk_df to CSV
             write_df(risk_df, output_file_path, index = False)
