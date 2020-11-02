@@ -1,0 +1,11 @@
+#brand-agg-stats {
+    z-index: 100000;
+    box-shadow: 8px 8px 18px #37393a;
+    padding: 1%;
+    justify-content: center;
+    align-items: center;
+}
+
+.statistics {
+    justify-content: center;
+}

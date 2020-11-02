@@ -1,0 +1,55 @@
+{
+    "1": {
+        "name": "Walmart",
+        "country": "United States",
+        "weightedAvgScore": 4,
+        "externalLink": "https://corporate.walmart.com/esgreport/",
+        "description": "Walmart Inc. is an American multinational retail corporation that operates a chain of hypermarkets, discount department stores, and grocery stores, headquartered in Bentonville, Arkansas. The company was founded by Sam Walton in 1962 and incorporated on October 31, 1969.",
+        "suppliers": [
+            {
+                "id": 1,
+                "name": "agropalma",
+                "country": "Brazil"
+            },
+            {
+                "id": 2,
+                "name": "agro palindo sakti",
+                "country": "Indonesia"
+            },
+            {
+                "id": 3,
+                "name": "sarana titian permata",
+                "country": "Indonesia"
+            }
+        ]
+    },
+    "2": {
+        "name": "Kellog's",
+        "country": "United States",
+        "weightedAvgScore": 3,
+        "externalLink": "http://crreport.kelloggcompany.com/esg-overview",
+        "description": "The Kellogg Company, doing business as Kellogg's, is an American multinational food manufacturing company headquartered in Battle Creek, Michigan, United States.",        
+        "suppliers": [
+            {
+                "id": 5,
+                "name": "pt sukajadi sawit mekar",
+                "country": "Indonesa"
+            },
+            {
+                "id": 6,
+                "name": "ramajaya pramukti",
+                "country": "Indonesa"
+            },
+            {
+                "id": 7,
+                "name": "sukajadi sawit mekar",
+                "country": "Indonesa"
+            },
+            {
+                "id": 8,
+                "name": "musirawas citra harpindo",
+                "country": "Indonesa"
+            }
+        ]
+    }
+}
