@@ -30,7 +30,7 @@ OUTPUT_BOUNDARIES_FNAME = 'boundaries.geojson'
 GFC_DATASET_NAME = "UMD/hansen/global_forest_change_2019_v1_7"
 OUTPUT_LOSS_FNAME = 'loss.csv'
 MILL_RADIUS_IN_M = 50000
-MILL_AREA_FACTOR = 900      # 1 pixel is 900 meters squared
+MILL_AREA_FACTOR = 0.09      # 1 pixel is 0.09 hectares
 OUTPUT_RISK_FNAME = 'risk.csv'
 RISK_YEARS_INCLUDED = [2018, 2019]
 
