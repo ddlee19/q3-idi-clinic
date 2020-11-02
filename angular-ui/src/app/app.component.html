@@ -1,0 +1,15 @@
+<app-nav 
+    [showNav]="showNav" 
+    (openFilterEvent)="openFilter($event)">
+</app-nav>
+<app-brand-filter 
+    [showBrands]="showBrands" 
+    (brandSelectedEvent)="brandSelected($event)"
+    (closeFilterEvent)="closeFilter($event)">
+</app-brand-filter>
+<app-map [selectedBrand]="selectedBrand"></app-map>
+<app-brand-aggregate-stats></app-brand-aggregate-stats>
+<app-brand 
+    [selectedBrand]="selectedBrand"
+    (closeBrandEvent)="closeBrand()">
+</app-brand>

@@ -1,0 +1,14 @@
+#logo {
+  margin: 0%;
+  box-shadow: 8px 8px 18px #37393a;
+}
+#navbar {
+    z-index: 100000;
+    box-shadow: 8px 8px 18px #37393a;
+}
+#navlinks div {
+  margin-bottom: 30%;
+}
+#navtitle {
+  margin-bottom: 40%;
+}

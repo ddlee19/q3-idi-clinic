@@ -1,0 +1,15 @@
+#brand-filter {
+    z-index: 100000;
+    box-shadow: 8px 8px 18px #37393a;
+    padding: 1%;
+    justify-content: center;
+    align-items: center;
+}
+
+#brand-filter-header i {
+    float: right;
+}
+
+#brand-list i {
+    float: right;
+}

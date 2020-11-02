@@ -1,0 +1,26 @@
+<ng-container *ngIf="showBrands">
+    <div id="brand-filter" class="ui sidebar wide left inverted vertical visible menu">
+        <div id="brand-filter-header" class="ui medium inverted header">
+            Select Consumer Brand
+            <a (click)="closeFilter('brands')"><i class="close small fitted inverted red bordered link icon"></i></a>
+        </div>
+        <div class="ui divider"></div>
+        <div id="brand-filter-search" class="ui search">
+            <div class="ui icon input">
+              <input class="prompt" type="text" placeholder="Search brands...">
+              <i class="search icon"></i>
+            </div>
+            <div class="results"></div>
+        </div>
+        <br/>
+        <div id="brand-list" class="ui inverted relaxed divided list">
+            <div class="item" *ngFor="let filter of filters;" (click)="openConsumerBrand(filter.id)">
+              <i class="marker icon"></i>
+              <div class="content">
+                <a class="header">{{filter.brandName}}</a>
+                <div class="description">{{filter.brandCountry}}</div>
+              </div>
+            </div>
+        </div>
+    </div>
+</ng-container>
