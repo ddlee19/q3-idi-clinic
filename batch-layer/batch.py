@@ -10,11 +10,12 @@ import ee
 from google.auth.transport.requests import AuthorizedSession
 from google.oauth2 import service_account
 
-from data_util import (build_uml_data, build_brand_data)
+from data_util import (build_uml_data, 
+                        build_brand_data,
+                        build_uml_boundaries_data, 
+                        build_uml_loss_data,
+                        build_uml_risk_data)
 from log_util import logger
-
-from data_util_a import (build_uml_boundaries_data, build_uml_loss_data,
-                         build_uml_risk_data)
 
 PROJECT = 'idi-development'
 SERVICE_ACCOUNT = 'idi-service-acct-development@idi-development.iam.gserviceaccount.com'
@@ -78,7 +79,9 @@ def load_uml_risk_data():
     input_file_path = os.path.join(OUTPUT_DIR, OUTPUT_LOSS_FNAME)
     output_file_path = os.path.join(OUTPUT_DIR, OUTPUT_RISK_FNAME)
     years = RISK_YEARS_INCLUDED
-    return build_uml_risk_data(input_file_path, output_file_path, years = years)
+    return build_uml_risk_data(input_file_path,
+                                output_file_path,
+                                years=years)
 
 def load_big_table():
     pass
@@ -98,31 +101,35 @@ if __name__ == '__main__':
     brand_df = load_brand_data()
     logger.info("Brand data shape: %s" % str(brand_df.shape))
 
-    ## TODO AMANDA: input: umls.json, output: boundaries.geojson
+    ##
+    # Input: umls.json, output: boundaries.geojson
     # This code should read the output/umls.json file, use EE to
     # calculate the polygon shapes (and probably water/land/intersection areas
     # when available), then write the output to geojson. Return geopandas df
     # with UML ID, lat/lon, and polygon shapes.
-    # Need to add land intersection areas.
     uml_boundaries_geodf = load_uml_boundaries_data(uml_df)
     logger.info("UML boundaries data shape: %s" % str(uml_boundaries_geodf.shape))
 
-    ## TODO AMANDA: input: boundaries.geojson, output: loss.csv
+    ##
+    # Input: boundaries.geojson, output: loss.csv
     # This code reads in the boundaries file, then computes yearly tree cover
     # loss with EE. The result shows uml_id with loss for each year in columns
     uml_loss_by_year_df = load_uml_loss_data()
     logger.info("UML loss data shape: %s" % str(uml_loss_by_year_df.shape))
 
-    ## TODO AMANDA: input: loss.csv, output: risk.csv
+    ##
+    # Input: loss.csv, output: risk.csv
     # This code reads in the loss file, then generates risk scores. The output
     # is a taable of uml_id as the index, and columns for corresponding scores
     uml_risk_df = load_uml_risk_data()
     logger.info("UML risk data shape: %s" % str(uml_risk_df.shape))
 
-    ## TODO TIM: input: all of the above, output bigtable for aggregations
+    ##
+    # Input: all of the above, output bigtable for aggregations
     # This code reads in and merges the output from above to create the big table used for aggregaations
     big_table_df = load_big_table()
 
-    ## TODO TIM: input: all of the above, output bigtable for aggregations
+    ##
+    # Input: all of the above, output bigtable for aggregations
     # This code reads in and merges the output from above to create the big table used for aggregaations
     generate_aggregations(big_table_df)
