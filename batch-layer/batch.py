@@ -9,6 +9,7 @@ import os
 import ee
 from google.auth.transport.requests import AuthorizedSession
 from google.oauth2 import service_account
+import pandas as pd
 
 from data_util import (build_uml_data, 
                         build_brand_data,
@@ -28,6 +29,7 @@ OUTPUT_UML_FNAME = 'umls.json'
 OUTPUT_BRAND_FNAME = 'brands.csv'
 INPUT_BRAND_FNAME = 'complete_match_update.tsv'
 OUTPUT_BOUNDARIES_FNAME = 'boundaries.geojson'
+OUTPUT_BIGTABLE_FNAME = 'bigtable.csv'
 MILL_AREAS_RES = 12
 GFC_DATASET_NAME = "UMD/hansen/global_forest_change_2019_v1_7"
 OUTPUT_LOSS_FNAME = 'loss.csv'
@@ -41,6 +43,7 @@ credentials = ee.ServiceAccountCredentials(SERVICE_ACCOUNT, KEY)
 ee.Initialize(credentials)
 session = AuthorizedSession(credentials)
 
+data = {}
 """Builds UML data from API
 """
 def load_uml_data():
@@ -83,11 +86,47 @@ def load_uml_risk_data():
                                 output_file_path,
                                 years=years)
 
-def load_big_table():
-    pass
 
-def generate_aggregations(table):
-    pass
+"""Bigtable class for handling data merging and aggregations
+"""
+class Bigtable():
+    def __init__(self, dfs={}):
+        self.out = os.path.join(OUTPUT_DIR, OUTPUT_BIGTABLE_FNAME)
+        self.brands = dfs.get('brands', load_brand_data())
+        self.uml =  dfs.get('uml', load_uml_data())
+        self.uml_geo = dfs.get('uml_geo', load_uml_boundaries_data(self.uml))
+        self.uml_loss = dfs.get('uml_loss', load_uml_loss_data())
+        self.uml_risk = dfs.get('uml_risk', load_uml_risk_data())
+        
+        self.fix()
+        self.build_big_table()
+
+    def fix(self):
+        self.uml['umlid'] = self.uml.id.str.lower()
+        self.uml_risk.umlid = self.uml_risk.umlid.str.lower()
+        self.uml_loss.umlid = self.uml_loss.umlid.str.lower()
+        self.uml_geo.umlid = self.uml_geo.umlid.str.lower()
+
+    def build_big_table(self):
+        df1 = self.brands.merge(self.uml_risk, on='umlid', how='left')
+        df2 = df1.merge(self.uml_loss, on='umlid', how='left')
+        self.bigtable = df2.merge(self.uml_geo, on='umlid', how='left')
+
+    def write_bigtable(self):
+        self.bigtable.to_csv(self.out)
+
+    def generate_aggregations(self):
+        # brand_groups = self.bigtable.groupby('brand')
+        # self.brand_groups = brand_groups.agg(
+        #     count=pd.NamedAgg(column='umlid', aggfunc='count')
+        # )
+        # brand_counts.sort_values(by='count', ascending=False)
+        # print(brand_counts)
+        pass
+
+
+
+
 
 if __name__ == '__main__':
     try:
@@ -120,16 +159,21 @@ if __name__ == '__main__':
     ##
     # Input: loss.csv, output: risk.csv
     # This code reads in the loss file, then generates risk scores. The output
-    # is a taable of uml_id as the index, and columns for corresponding scores
+    # is a table of uml_id as the index, and columns for corresponding scores
     uml_risk_df = load_uml_risk_data()
     logger.info("UML risk data shape: %s" % str(uml_risk_df.shape))
 
     ##
-    # Input: all of the above, output bigtable for aggregations
-    # This code reads in and merges the output from above to create the big table used for aggregaations
-    big_table_df = load_big_table()
-
-    ##
-    # Input: all of the above, output bigtable for aggregations
-    # This code reads in and merges the output from above to create the big table used for aggregaations
-    generate_aggregations(big_table_df)
+    # Input: all of the above, output bigtable.csv
+    # This code reads in and merges the output from above to create the big table used for aggregations
+    tables = {
+        'out': os.path.join(OUTPUT_DIR, OUTPUT_BIGTABLE_FNAME),
+        'brands': brand_df,
+        'uml':  uml_df,
+        'uml_geo': uml_boundaries_geodf,
+        'uml_loss': uml_loss_by_year_df,
+        'uml_risk': uml_risk_df}
+    
+    t = Bigtable(tables)
+    t.write_bigtable()
+    logger.info("Bigtable data shape: %s" % str(t.bigtable.shape))

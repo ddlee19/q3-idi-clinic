@@ -71,7 +71,9 @@ def build_brand_data(input_path, output_path):
         df = df[df['Country'] == 'indonesia']
 
         # Keep wanted columns
-        df = df[['idx','UMLID', 'Consumer Company', 'Mill Name', 'Mill Company', 'Parent Company', 'Province', 'District','Latitude', 'Longitude', 'RSPO']]
+        df = df[['idx','UMLID', 'Consumer Company', 'Mill Name', 
+                'Mill Company', 'Parent Company', 'Province', 
+                'District', 'RSPO']]
 
         # Rename columns
         mapper = {
@@ -83,8 +85,6 @@ def build_brand_data(input_path, output_path):
                 'Parent Company': 'parent_co',
                 'Province': 'province',
                 'District': 'district',
-                'Latitude': 'lat',
-                'Longitude': 'long',
                 'RSPO': 'rspo'}
         df = df.rename(columns=mapper)
         df.reset_index(drop=True, inplace=True)
