@@ -15,5 +15,5 @@ pip install -r requirements.txt
 
 Your environment should be ready to run the examples using the usual bash or ipython commands:
 ```
-python3 api_basics.py
+python3 batch.py
 ```
