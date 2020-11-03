@@ -12,31 +12,32 @@ import pandas as pd
 from log_util import logger
 
 
-
-"""Stores mills data from remote API call in a temporary directory
-This is run automatically the first time the server starts
+"""Writes JSON data to file
 """
 def write_json(mills, path):
     try:
-        os.mkdir('output')
-    except FileExistsError:
-        pass
-
-    with open(path, 'w') as f:
-        f.write(json.dumps(mills))
-
-    logger.info('Completed writing %s' % path)
+        with open(path, 'w') as f:
+            f.write(json.dumps(mills))
+        logger.info('Completed writing %s' % path)
+    except Exception as e:
+        logger.error('Failed writing %s' % path)
 
 
-
-"""Stores consumer data locally
+"""Writes dataframe to csv file
 """
-def write_df(df, path, index):
+def write_df(df, path, index=False):
     try:
-        os.mkdir('output')
-    except FileExistsError:
-        pass
+        df.to_csv(path, index=index)
+        logger.info('Completed writing %s' % path)
+    except Exception as e:
+        logger.error('Failed writing %s' % path)
 
-    df.to_csv(path, index=index)
 
-    logger.info('Completed writing %s' % path)
+"""Writes geodataframe to geojson.
+"""
+def write_geojson(mills_gdf, path):
+    try:
+        mills_gdf.to_file(path, driver='GeoJSON')
+        logger.info('Completed writing %s' % path)
+    except Exception as e:
+        logger.error('Failed writing %s' % path)
