@@ -40,10 +40,10 @@ def get_brand_shorts():
     return jsonify(factory.get_brand_shorts(mill_id))
 
 
-#@app.route("/api/v1.0/brands/stats", methods=['GET'])
-#@cross_origin()
-#def get_brand_stats():
-#    return jsonify(factory.get_brand_stats())
+@app.route("/api/v1.0/brands/stats", methods=['GET'])
+# @cross_origin()
+def get_aggregate_brand_stats():
+   return jsonify(factory.get_brand_stats())
 
 
 @app.route('/api/v1.0/mills/<string:mill_id>', methods=['GET'])
