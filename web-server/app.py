@@ -8,12 +8,14 @@
 import os
 import requests
 import json
+import pandas as pd
 
-from flask import Flask, jsonify, render_template, abort, make_response
+from flask import Flask, jsonify, render_template, abort, make_response, request
 from flask_cors import CORS, cross_origin
-from app_util import build_mills_records, parse_brand_aggregations, parse_brand_filters, parse_brand_records
 from log_util import logger
-from map_util.map_builder import get_folium_map, get_tile_urls
+from map_util.map_builder import get_tile_urls
+from data_factory import DataFactory
+
 
 MILLS_URL = "https://opendata.arcgis.com/datasets/5c026d553ff049a585b90c3b1d53d4f5_34.geojson"
 
@@ -22,63 +24,50 @@ cors = CORS(app)
 config = {'host': os.environ.get('APP_HOST', '0.0.0.0'), 
           'port': os.environ.get("PORT", 5000),
           'CORS_HEADERS': 'Content-Type'}
-mills_records = build_mills_records({},
-                                    MILLS_URL,
-                                    {'country': 'Indonesia'})
-brand_aggregations = parse_brand_aggregations()
-brand_filters = parse_brand_filters()
-brand_records = parse_brand_records()
+factory = DataFactory()
+
+
+@app.route('/api/v1.0/brands/<string:brand_name>', methods=['GET'])
+def get_brand(brand_name):
+    if not factory.is_valid_brand_name(brand_name):
+        abort(404)
+    return jsonify(factory.get_brand(brand_name))
+
+
+@app.route('/api/v1.0/brands/short', methods=['GET'])
+def get_brand_shorts():
+    mill_id = request.args.get("mill_id")
+    return jsonify(factory.get_brand_shorts(mill_id))
+
+
+#@app.route("/api/v1.0/brands/stats", methods=['GET'])
+#@cross_origin()
+#def get_brand_stats():
+#    return jsonify(factory.get_brand_stats())
+
+
+@app.route('/api/v1.0/mills/<string:mill_id>', methods=['GET'])
+def get_mill(mill_id):
+    if not factory.is_valid_mill_id(mill_id):
+        abort(404)
+    return jsonify(factory.get_mill(mill_id))
 
 
 @app.route("/api/v1.0/mills", methods=['GET'])
 def get_mills():
-    return jsonify(mills_records)
+    return jsonify(factory.get_mills())
 
 
-@app.route('/api/v1.0/mills/<int:mill_id>', methods=['GET'])
-def get_mill(mill_id):
-    if mill_id not in mills_records:
-        abort(404)
-    return jsonify({'mill': mills_records[mill_id]})
-
-
-@app.route("/api/v1.0/folium-map", methods=['GET'])
-def get_folium():
-    html = get_folium_map(mills_records)
-    return jsonify({'html': html})
+#@app.route("/api/v1.0/brands/stats", methods=['GET'])
+#@cross_origin()
+#def get_mill_stats():
+#    return jsonify(factory.get_mill_stats())
 
 
 @app.route("/api/v1.0/tile-urls", methods=['GET'])
 @cross_origin()
 def get_tiles():
     return jsonify(get_tile_urls())
-
-
-@app.route('/api/v1.0/brands/<string:brand_id>', methods=['GET'])
-def get_brand(brand_id):
-    if brand_id not in brand_records:
-        abort(404)
-
-    brand_mills = []
-    for r in mills_records.values():
-        if str(r["properties"]["consumer_brand_id"]) == brand_id:
-            brand_mills.append(r)
-
-    brand = brand_records[brand_id]
-    brand["mills"] = brand_mills
-    return jsonify(brand)
-
-
-@app.route("/api/v1.0/brands/stats", methods=['GET'])
-@cross_origin()
-def get_brand_stats():
-    return jsonify(brand_aggregations)
-
-
-@app.route("/api/v1.0/brands", methods=['GET'])
-@cross_origin()
-def get_brand_filters():
-    return jsonify(brand_filters)
 
 
 @app.errorhandler(404)
