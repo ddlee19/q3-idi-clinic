@@ -54,21 +54,33 @@ class DataFactory:
     def __init__(self):
         self._mills = pd.read_csv("../sample_data/mills.csv")
         self._brands = pd.read_csv("../sample_data/brands.csv")
+        self._uniquemills = pd.read_csv("../sample_data/uniquemills.csv")
 
 
-    # Implementing this week
     def get_aggregate_brand_stats(self):
         '''
         Retrieves statistics computed across *all* consumer brands.
         '''
-        pass
+        df = self._mills
+        summary_df = df.select_dtypes(include=['float64']).describe()
+        summary_df.drop('count', axis=0, inplace=True)
+        payload = summary_df.to_dict(orient="records")
+
+        return payload
+
 
 
     def get_aggregate_mill_stats(self):
         '''
         Retrieves statistics computed across *all* mills.
         '''
-        pass
+        df = self._uniquemills
+        summary_df = df.select_dtypes(include=['float64']).describe()
+        summary_df.drop('count', axis=0, inplace=True)
+        summary_df.drop(columns=['latitude_x', 'latitude_y', 'longitude_x', 'longitude_y'], inplace=True)
+        payload = summary_df.to_dict(orient="records")
+
+        return payload
 
 
     def get_brand(self, brand_name):
