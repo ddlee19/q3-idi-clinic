@@ -76,26 +76,25 @@ export class MapComponent implements AfterViewInit  {
     let markers = [];
     let radiiLayer = L.geoJSON(null, { style: this.getMillStyleObject });
 
-    Object.keys(mills).forEach(key => {
-      let mill = mills[key];
-      let millProps = mill.properties;
+    mills.forEach(m => {
+      let mill = m.properties;
       let marker = L.marker(
-          [millProps.latitude, millProps.longitude], 
+          [mill.latitude, mill.longitude], 
           {icon: this.styleMillMarker(mill)}
         )
         .bindPopup(`
           <div>
             <h3>
-              ${millProps.mill_name}<br/>
+              ${mill.mill_name}<br/>
               <span style="color:grey;">
-                ${millProps.sub_state.toUpperCase()}, ${millProps.state.toUpperCase()}
+                ${mill.district.toUpperCase()}, ${mill.province.toUpperCase()}
               </span>
             </h3>
           <div>
         `);
 
         markers.push(marker);
-        radiiLayer.addData(mill);
+        radiiLayer.addData(<any>m);
       });
 
       let markerLayer = L.layerGroup(markers);
@@ -109,20 +108,20 @@ export class MapComponent implements AfterViewInit  {
   * Returns a style object for a mill based on relative score.
   */
   private getMillStyleObject(feature): object{
-    let score = feature.properties.relative_score
-    if (score <= -1){
+    let score = feature.properties.risk_score_current
+    if (score == 1){
       return {color: "#F11722", fillColor:"#F11722", opacity: 0.2};
     }
-    else if (score > -1 && score <= -0.5){
+    else if (score == 2){
       return {color: "#F55B62", fillColor:"#F55B62", opacity: 0.2};
     }
-    else if (score > -0.5 && score <= 0){
+    else if (score == 3){
       return {color: "#F11722", fillColor:"#F11722", opacity: 0.2};
     }
-    else if (score > 0 && score <= 0.5){
+    else if (score == 4){
       return {color: "#F98E94", fillColor:"#F98E94", opacity: 0.2};
     }
-    else if (score > 0.5 && score <= 1){
+    else if (score == 5){
       return {color: "#F8B44D", fillColor:"#F8B44D", opacity: 0.2};
     }
     else {
@@ -196,7 +195,7 @@ export class MapComponent implements AfterViewInit  {
     Object.values(this.mapFeatures).forEach(mill => {
       let props = mill.properties;
 
-      if(props.consumer_brand_id == brandId){
+      if(brandId in props.brand){
         let marker = L.marker(
           [props.latitude, props.longitude], 
           {icon: this.styleMillMarker(mill)}
@@ -206,7 +205,7 @@ export class MapComponent implements AfterViewInit  {
             <h3>
               ${props.mill_name}<br/>
               <span style="color:grey;">
-                ${props.sub_state.toUpperCase()}, ${props.state.toUpperCase()}
+                ${props.district.toUpperCase()}, ${props.province.toUpperCase()}
               </span>
             </h3>
           <div>

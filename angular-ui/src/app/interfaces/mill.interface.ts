@@ -12,22 +12,19 @@ export interface Mill {
  * The properties associated with a mill.
 */
 export interface MillProperties {
-    objectid: number;
-    mill_name: string;
+    brand: [string];
+    country: string;
+    district: string;
     latitude: number;
     longitude: number;
-    rspo_model: string;
-    consumer_brand_id: number;
-    relative_score: number;
-    absolute_score: number;
-    cert: string;
-    id: string;
-    prnt_comp: string;
-    country: string;
-    state: string;
-    sub_state: string;
-    alt_name: string;
-    address: string;
-    globalid: string;
-    Group_Name: string;
+    objectid: number;
+    mill_co: string;
+    mill_name: string;
+    parent_co: string;
+    province: string;
+    risk_score_current: number;
+    risk_score_future: number;
+    risk_score_past: number;
+    rspo: string;
+    umlid: string;
 }

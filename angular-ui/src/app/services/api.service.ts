@@ -29,7 +29,7 @@ export class ApiService {
 
   /** GET brand filter choices from the server */
   getBrandFilters(): Promise<BrandFilter[]> {
-    return this.http.get<BrandFilter[]>(this.apiBase + "brands").toPromise();
+    return this.http.get<BrandFilter[]>(this.apiBase + "brands/short").toPromise();
   }
 
   /** GET consumer brand from the server by id */

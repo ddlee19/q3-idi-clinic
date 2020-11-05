@@ -58,7 +58,7 @@ def get_mills():
     return jsonify(factory.get_mills())
 
 
-#@app.route("/api/v1.0/brands/stats", methods=['GET'])
+#@app.route("/api/v1.0/mills/stats", methods=['GET'])
 #@cross_origin()
 #def get_mill_stats():
 #    return jsonify(factory.get_mill_stats())

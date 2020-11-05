@@ -9,6 +9,7 @@ class DataFactory:
         "id",
         "name",
         "country",
+        "description",
         "rspo_member_since",
         "external_link"
     ]
@@ -105,8 +106,18 @@ class DataFactory:
         Retrieves all mills.
         '''
         mill_brands = self._mills.groupby("umlid").agg({"brand":lambda b: list(b)})
-        mills = self._mills[self.MILL_ATTRS].join(mill_brands, on="umlid")
-        return mills.to_dict(orient="records")
+        unique_mills = self._mills.drop_duplicates("umlid")[self.MILL_ATTRS]
+        mills = unique_mills.join(mill_brands, on="umlid")
+
+        mill_features = []
+        for m in mills.to_dict(orient="records"):
+            feature = {}
+            feature["type"] = "Feature"
+            feature["properties"] = m
+            feature["geometry"] = m["geometry"]
+            mill_features.append(feature)
+
+        return mill_features
 
 
     def get_brand_shorts(self, mill_id=None):
