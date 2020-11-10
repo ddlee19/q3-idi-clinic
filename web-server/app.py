@@ -28,22 +28,24 @@ factory = DataFactory()
 
 
 @app.route('/api/v1.0/brands/<string:brand_name>', methods=['GET'])
+@cross_origin()
 def get_brand(brand_name):
     if not factory.is_valid_brand_name(brand_name):
         abort(404)
     return jsonify(factory.get_brand(brand_name))
 
 
-@app.route('/api/v1.0/brands/short', methods=['GET'])
-def get_brand_shorts():
+@app.route('/api/v1.0/brands', methods=['GET'])
+@cross_origin()
+def get_brands():
     mill_id = request.args.get("mill_id")
-    return jsonify(factory.get_brand_shorts(mill_id))
+    return jsonify(factory.get_brands(mill_id))
 
 
 @app.route("/api/v1.0/brands/stats", methods=['GET'])
-# @cross_origin()
+@cross_origin()
 def get_aggregate_brand_stats():
-   return jsonify(factory.get_brand_stats())
+   return jsonify(factory.get_aggregate_brand_stats())
 
 
 @app.route('/api/v1.0/mills/<string:mill_id>', methods=['GET'])
@@ -54,14 +56,15 @@ def get_mill(mill_id):
 
 
 @app.route("/api/v1.0/mills", methods=['GET'])
+@cross_origin()
 def get_mills():
-    return jsonify(factory.get_mills())
+    return factory.get_mills()
 
 
-#@app.route("/api/v1.0/mills/stats", methods=['GET'])
-#@cross_origin()
-#def get_mill_stats():
-#    return jsonify(factory.get_mill_stats())
+@app.route("/api/v1.0/mills/stats", methods=['GET'])
+@cross_origin()
+def get_mill_stats():
+    return jsonify(factory.get_aggregate_mill_stats())
 
 
 @app.route("/api/v1.0/tile-urls", methods=['GET'])
@@ -76,4 +79,5 @@ def not_found(error):
 
 
 if __name__ == "__main__":
+    app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
     app.run(host=config.get('host'), port=config.get('port'))

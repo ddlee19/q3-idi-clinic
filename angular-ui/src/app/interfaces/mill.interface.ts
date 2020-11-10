@@ -1,3 +1,8 @@
+export interface MillFeatureCollection {
+    type: string;
+    features: [Mill];
+}
+
 /**
  * A detailed represenation of a palm oil mill. 
 */
@@ -26,5 +31,7 @@ export interface MillProperties {
     risk_score_future: number;
     risk_score_past: number;
     rspo: string;
+    state: string;
+    sub_state: string;
     umlid: string;
 }

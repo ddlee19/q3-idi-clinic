@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service'
-import { BrandAggregateStats } from '../../interfaces/brand-stats.interface'
+import { BrandAggregateStats } from '../../interfaces/stats/stats-brand-agg.interface'
 
 
 @Component({
@@ -16,7 +16,7 @@ export class BrandAggregateStatsComponent implements OnInit {
   * Gets aggregate consumer brand data from the server.
   */
   private async getAggregateBrandData(): Promise<void> {
-    this.aggBrandStats = await this.apiService.getAggregateBrandData();
+    this.aggBrandStats = await this.apiService.getBrandAggregateStats();
   }
 
   constructor(private apiService: ApiService) {}

@@ -24,7 +24,7 @@ export class MapComponent implements AfterViewInit  {
   overlayMaps = {};
   treeCoverLayers: TileUrl[];
 
-  private mapFeatures: Mill[];
+  private millFeatures: Mill[];
 
   /**
   * Initializes a Leaflet.js map and assigns it either one of two base layers.
@@ -71,25 +71,26 @@ export class MapComponent implements AfterViewInit  {
   * Note: Mills are returned as a dictionary with object ids as keys.
   */
   private async addMillLayer(): Promise<void> {
-    let mills = await this.apiService.getMills();
-    this.mapFeatures = mills;
+    let millFeatureCollection = await this.apiService.getMills();
+    this.millFeatures = millFeatureCollection.features;
     let markers = [];
     let radiiLayer = L.geoJSON(null, { style: this.getMillStyleObject });
 
-    mills.forEach(m => {
+    this.millFeatures.forEach(m => {
       let mill = m.properties;
       let marker = L.marker(
           [mill.latitude, mill.longitude], 
-          {icon: this.styleMillMarker(mill)}
+          {icon: this.styleMillMarker(m)}
         )
         .bindPopup(`
           <div>
-            <h3>
+            <h4>
               ${mill.mill_name}<br/>
               <span style="color:grey;">
-                ${mill.district.toUpperCase()}, ${mill.province.toUpperCase()}
-              </span>
-            </h3>
+                ${mill.sub_state.toUpperCase()}, ${mill.state.toUpperCase()}
+              </span><br/>
+              Current Risk Score: ${mill.risk_score_current}
+            </h4>
           <div>
         `);
 
@@ -107,33 +108,31 @@ export class MapComponent implements AfterViewInit  {
   /**
   * Returns a style object for a mill based on relative score.
   */
-  private getMillStyleObject(feature): object{
-    let score = feature.properties.risk_score_current
-    if (score == 1){
-      return {color: "#F11722", fillColor:"#F11722", opacity: 0.2};
+  private getMillStyleObject(millFeature): object{
+    let score = millFeature.properties.risk_score_current
+
+    if (score == 1) {
+      return {color: "#ffc743", fillColor:"#ffc743", opacity: 0.2};
     }
     else if (score == 2){
-      return {color: "#F55B62", fillColor:"#F55B62", opacity: 0.2};
+      return {color: "#fb7337", fillColor:"#fb7337", opacity: 0.2};
     }
     else if (score == 3){
-      return {color: "#F11722", fillColor:"#F11722", opacity: 0.2};
+      return {color: "#f60b28", fillColor:"#f60b28", opacity: 0.2};
     }
     else if (score == 4){
-      return {color: "#F98E94", fillColor:"#F98E94", opacity: 0.2};
-    }
-    else if (score == 5){
-      return {color: "#F8B44D", fillColor:"#F8B44D", opacity: 0.2};
+      return {color: "#95081b", fillColor:"#95081b", opacity: 0.2};
     }
     else {
-      return {color: "#F8ED4D", fillColor:"#F8ED4D", opacity: 0.2};
+      return {color: "#34040d", fillColor:"#34040d", opacity: 0.2};
     }
   }
 
   /**
   * Builds a custom HTML/CSS-only icon for a mill marker.
   */
-  private styleMillMarker(mill): L.DivIcon{
-    let style = this.getMillStyleObject(mill);
+  private styleMillMarker(m): L.DivIcon{
+    let style = this.getMillStyleObject(m);
 
     let markerHtmlStyles = `
       background-color: ${style["fillColor"]};
@@ -149,7 +148,7 @@ export class MapComponent implements AfterViewInit  {
 
     return new L.DivIcon({
       className: "my-custom-pin",
-      iconAnchor: [0, 24],
+      iconAnchor: [0, 0],
       popupAnchor: [0, -36],
       html: `<span style="${markerHtmlStyles}" />`
     })
@@ -158,7 +157,7 @@ export class MapComponent implements AfterViewInit  {
   /**
   * Filters mill markers displayed on the map by brand.
   */
-  private filterMills(brandId: number): void{
+  private filterMills(brandName: string): void{
 
     // Retrieve filtered marker layer and remove if exists
     if(this.overlayMaps.hasOwnProperty("Filtered Markers")){
@@ -179,7 +178,7 @@ export class MapComponent implements AfterViewInit  {
     let allPolygons = this.overlayMaps["AllMillPolygons"]
 
     // If no filters are set, add all polygons and mills by default and return
-    if (brandId == null){
+    if (brandName == null){
       allPolygons.addTo(this.map);
       allMills.addTo(this.map);
       return;
@@ -192,10 +191,12 @@ export class MapComponent implements AfterViewInit  {
     // Generate new layers that filter by consumer brand
     let markers = []
     let radiiLayer = L.geoJSON(null, { style: this.getMillStyleObject });
-    Object.values(this.mapFeatures).forEach(mill => {
+    Object.values(this.millFeatures).forEach(mill => {
       let props = mill.properties;
 
-      if(brandId in props.brand){
+
+      if(props.brand !== undefined && brandName in props.brand){
+        console.log("In here")
         let marker = L.marker(
           [props.latitude, props.longitude], 
           {icon: this.styleMillMarker(mill)}
@@ -232,7 +233,8 @@ export class MapComponent implements AfterViewInit  {
     this.addMillLayer();
   }
 
-  ngOnChanges(changes: SimpleChanges) {      
+  ngOnChanges(changes: SimpleChanges) { 
+    console.log(changes.selectedBrand.currentValue) ;   
     this.filterMills(changes.selectedBrand.currentValue);
   }
 }

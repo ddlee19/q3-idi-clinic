@@ -64,6 +64,9 @@ class BrandShort:
     name: str
     country: str
     rspo_member_since: str
+    mill_count: int
+    mill_count_rspo: int
+    mill_count_non_rspo: int
 
     @classmethod
     def from_df_row(cls, row):

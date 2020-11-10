@@ -14,11 +14,11 @@
         </div>
         <br/>
         <div id="brand-list" class="ui inverted relaxed divided list">
-            <div class="item" *ngFor="let filter of filters;" (click)="openConsumerBrand(filter.id)">
+            <div class="item" *ngFor="let filter of filters;" (click)="openConsumerBrand(filter.name)">
               <i class="marker icon"></i>
               <div class="content">
-                <a class="header">{{filter.brandName}}</a>
-                <div class="description">{{filter.brandCountry}}</div>
+                <a class="header">{{filter.name}}</a>
+                <div class="description">{{filter.country}}</div>
               </div>
             </div>
         </div>

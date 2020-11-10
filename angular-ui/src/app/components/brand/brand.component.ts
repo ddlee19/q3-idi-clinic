@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { ApiService } from '../../services/api.service'
-import { Brand } from '../../interfaces/brand.interface';
+import { DetailedBrand } from '../../interfaces/brands/brand-detailed.interface';
 
 
 @Component({
@@ -12,14 +12,14 @@ export class BrandComponent implements OnInit {
 
   @Input() selectedBrand: number = null;
   @Output() closeBrandEvent = new EventEmitter();
-  brand: Brand;
+  brand: DetailedBrand;
 
   /**
   * Gets a consumer brand from the server by id.
   */
-  private async getBrand(brandId: number): Promise<void> {
-    if(brandId != null){
-      this.brand = await this.apiService.getConsumerBrand(brandId);
+  private async getBrand(brandName: string): Promise<void> {
+    if(brandName != null){
+      this.brand = await this.apiService.getBrand(brandName);
     }
   }
 
