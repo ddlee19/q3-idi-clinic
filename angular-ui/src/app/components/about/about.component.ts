@@ -9,7 +9,7 @@ export class AboutComponent implements OnInit {
 
   launchModal() {
     // Sample code from 'https://semantic-ui.com/modules/modal.html#/definition'
-    $('.ui.modal').modal('show');
+    //$('.ui.modal').modal('show');
   }
 
   constructor() { }
