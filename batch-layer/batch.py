@@ -16,7 +16,9 @@ from data_util import (build_uml_data,
                         build_brand_data,
                         build_uml_boundaries_data,
                         build_loss_data,
-                        build_risk_data)
+                        build_risk_data,
+                        get_risk_from_z,
+                        get_z)
 from log_util import logger
 
 PROJECT = 'idi-development'
@@ -41,6 +43,7 @@ OUTPUT_UML_RISK_FNAME = 'uml_risk.csv'
 RISK_YEARS_INCLUDED = [2018, 2019]
 OUTPUT_BRAND_BOUNDARIES_FNAME = 'brand_boundaries.geojson'
 OUTPUT_BRAND_LOSS_FNAME = 'brand_loss.csv'
+OUTPUT_BRAND_RISK_FNAME = 'brand_risk.csv'
 OUTPUT_UNIQUE_MILLS_FNAME = 'uniquemills.csv'
 OUTPUT_UNIQUE_BRANDS_FNAME = 'uniquebrands.csv'
 OUTPUT_MATCHES_FNAME = 'brand_mills.csv'
@@ -168,13 +171,11 @@ class Bigtable():
 
     def aggregate_brand_stats(self):
         self.brand_loss = self.load_brand_loss()
+        self.brand_risk = self.compute_brand_risk()
         brand_groups = self.bigtable.groupby('brand')
         brand_df = brand_groups.agg(
             brandid=pd.NamedAgg(column='brandid', aggfunc='first'),
             mill_count=pd.NamedAgg(column='umlid', aggfunc='count'),
-            mean_future_risk=pd.NamedAgg('risk_score_future', 'mean'),
-            mean_past_risk=pd.NamedAgg('risk_score_past', 'mean'),
-            mean_current_risk=pd.NamedAgg('risk_score_current', 'mean'),
             rspo_mill_count=pd.NamedAgg(column='cert', aggfunc=lambda x: x.value_counts()['RSPO Certified']),
             unique_parent_co=pd.NamedAgg(column='prnt_comp', aggfunc=lambda x: len(x.unique())),
             unique_group_name=pd.NamedAgg(column='group_name', aggfunc=lambda x: len(x.unique()))
@@ -189,7 +190,8 @@ class Bigtable():
                       'description']
         unique_brands_df = self.brands[brand_cols].drop_duplicates()
         brand_df1 = brand_df.merge(unique_brands_df, on='brandid', how='left')
-        self.brand_df = brand_df1.merge(self.brand_loss, on='brandid', how='left')
+        brand_df2 = self.brand_loss.merge(self.brand_risk, on='brandid', how='left')
+        self.brand_df = brand_df1.merge(brand_df2, on='brandid', how='left')
 
         self.brand_df = self.brand_df.sort_values(by='mill_count',
                                                           ascending=False)
@@ -205,6 +207,43 @@ class Bigtable():
                                    GFC_DATASET_NAME,
                                    'brandid',
                                    area_factor = MILL_AREA_FACTOR)
+
+    def compute_brand_risk(self, years = RISK_YEARS_INCLUDED):
+        # Past risk: brand_loss['treeloss_sum_proportion_of_forest']
+        # Current risk: (brand_loss['treeloss_2018'] + brand_loss['treeloss_2019'])/forest2000
+        # Future risk: 0.5*z-score for current risk + 0.5*z-score for remaining percent of forest2000
+        # Calculate past risk metric - z - risk
+        loss_cols = ['brandid',
+                     'forest_area',
+                     'treeloss_sum',
+                     'treeloss_sum_proportion_of_forest',
+                     'remaining_proportion_of_forest']
+        for year in years:
+            loss_cols.append('treeloss_' + str(year))
+        df = self.brand_loss.loc[:,loss_cols]
+        df['past_z'] = get_z(df, 'treeloss_sum_proportion_of_forest')
+        df['risk_score_past'] = get_risk_from_z(df, 'past_z')
+
+        # Calculate current risk metric - z-score - risk score
+        mean_col = 'mean_loss_'
+        for year in years:
+            mean_col += str(year)
+
+        col_list = ['treeloss_' + str(year) for year in years]
+        df[mean_col] = df.loc[:, col_list].mean(axis=1)
+        df['current_loss_rate'] = df[mean_col]/df['forest_area']
+        df['current_z'] = get_z(df, 'current_loss_rate')
+        df['risk_score_current'] = get_risk_from_z(df, 'current_z')
+
+        # Calculate future risk metric - z-score - risk score
+        df['z_forest_remaining'] = get_z(df, 'remaining_proportion_of_forest')
+        df['future_z'] = 0.5*df['z_forest_remaining'] + 0.5*df['current_z']
+        df['risk_score_future'] = get_risk_from_z(df, 'future_z')
+
+        return df[['brandid',
+                   'risk_score_past',
+                   'risk_score_current',
+                   'risk_score_future']]
 
 
     def write_uniquebrands(self):
