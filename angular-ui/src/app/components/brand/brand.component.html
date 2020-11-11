@@ -11,7 +11,7 @@
         <div class="item">
             <p>
                 {{brand.description}}
-                <a href="{{brand.externalLink}}" target="_blank">
+                <a href="{{brand.external_link}}" target="_blank">
                     <i class="icon small blue inverted external alternate link"></i>
                 </a>
             </p>
@@ -22,9 +22,9 @@
                 <div class="ui small inverted header center aligned">Stats</div>
                 <div class="ui inverted orange statistics center aligned">
                     <div class="statistic">
-                      <div class="value">{{brand.weightedAvgScore}}</div>
+                      <div class="value">{{brand.risk_score_future_mean}}</div>
                       <div class="label">
-                          Absolute Deforestation Score
+                          Future Risk of Deforestation
                           <i class="info icon link inverted circular blue"></i>
                         </div>
                     </div>
@@ -32,8 +32,12 @@
                 <br/>
                 <div class="ui three tiny inverted statistics">
                     <div class="ui statistic">
-                        <div class="value">{{ 1 | number}}</div>
-                        <div class="label">Country</div>
+                        <div class="value">
+                            {{brand.num_countries_of_operation | number}}
+                        </div>
+                        <div class="label">
+                            {{brand.num_countries_of_operation == 1 ? "Country" : "Countries" }}
+                        </div>
                     </div>
                     <div class="ui statistic">
                         <div class="value">{{brand.suppliers.length | number}}</div>
@@ -46,18 +50,20 @@
                 </div>
                 <div class="ui small inverted header center aligned">Supplier Partners</div>
                 <div id="suppliers">
-                    <table class="ui small single line selectable inverted celled table">
+                    <table class="ui small single line selectable inverted celled very compact table">
                         <thead>
                             <tr>
                                 <th></th>
                                 <th>Name</th>
                                 <th>Country</th>
+                                <th>Number Brand Mills</th>
                             </tr>
                         </thead>
                         <tr *ngFor="let supplier of brand.suppliers; let i = index">
                             <td>{{i+1}}</td>
                             <td>{{supplier.name}}</td>
                             <td>{{supplier.country}}</td>
+                            <td class="center aligned">{{supplier.mill_count}}</td>
                         </tr>
                     </table>
                 </div>
@@ -77,12 +83,12 @@
                         </thead>
                         <tr *ngFor="let mill of brand.mills; let i = index">
                             <td>{{i+1}}</td>
-                            <td>{{mill.properties.mill_name}}</td>
-                            <td>{{mill.properties.absolute_score}}</td>
-                            <td>{{mill.properties.country}}</td>
-                            <td>{{mill.properties.state}}</td>
-                            <td>{{mill.properties.sub_state}}</td>
-                            <td>{{mill.properties.Group_Name}}</td>
+                            <td>{{mill.mill_name}}</td>
+                            <td class="center aligned">{{mill.risk_score_future}}</td>
+                            <td>{{mill.country}}</td>
+                            <td>{{mill.state}}</td>
+                            <td>{{mill.sub_state}}</td>
+                            <td>{{mill.parent_co}}</td>
                         </tr>
                     </table>
                 </div>

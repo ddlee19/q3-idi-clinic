@@ -11,21 +11,21 @@
             </div>
             <div class="ui tiny inverted statistics">
                 <div class="ui statistic">
-                    <div class="value">{{aggBrandStats.brands.length | number}}</div>
+                    <div class="value">{{aggBrandStats?.brands.length | number}}</div>
                     <div class="label">Brands</div>
                 </div>
                 <div class="ui statistic">
-                    <div class="value">{{aggBrandStats.total_num_countries | number}}</div>
-                    <div class="label">Countries</div>
+                    <div class="value">{{aggBrandStats?.total_num_countries | number}}</div>
+                    <div class="label">{{aggBrandStats?.total_num_countries == 1 ? "Country" : "Countries"}}</div>
                 </div>
             </div>
             <div class="ui tiny inverted statistics">
                 <div class="ui statistic">
-                    <div class="value">{{aggBrandStats.total_num_suppliers | number}}</div>
+                    <div class="value">{{aggBrandStats?.total_num_suppliers | number}}</div>
                     <div class="label">Suppliers</div>
                 </div>
                 <div class="ui statistic">
-                    <div class="value">{{aggBrandStats.total_num_mills | number}}</div>
+                    <div class="value">{{aggBrandStats?.total_num_mills | number}}</div>
                     <div class="label">Mills</div>
                 </div>
             </div>
@@ -43,7 +43,7 @@
                     <th>Future Risk Score</th>
                 </tr>
             </thead>
-            <tr *ngFor="let brandRank of aggBrandStats.brands; let i = index">
+            <tr *ngFor="let brandRank of aggBrandStats?.brands; let i = index">
                 <td>{{i+1}}</td>
                 <td>{{brandRank.name}}</td>
                 <td>{{brandRank.country}}</td>

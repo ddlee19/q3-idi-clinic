@@ -7,58 +7,62 @@ class DataFactory:
     FIELDS TO SELECT FROM DATAFRAME
     '''
     BRAND_ATTRS = [
-        "id",
-        "name",
         "country",
         "description",
-        "rspo_member_since",
-        "external_link"
+        "external_link",
+        "id",
+        "name",
+        "rspo_member_since"
     ]
 
     BRANDSHORT_ATTRS = [
-        "id",
-        "name",
         "country",
-        "rspo_member_since",
+        "id",
         "mill_count",
-        "mill_count_rspo",
         "mill_count_non_rspo",
-        "risk_score_future_mean"
+        "mill_count_rspo",
+        "name",
+        "risk_score_future_mean",
+        "rspo_member_since",
     ]
 
     MILL_ATTRS = [
-        "umlid", 
-        "mill_name",
+        "country",
         "latitude",
         "longitude",
-        "country", 
-        "province", 
-        "district",
+        "geometry"
         "mill_co",
+        "mill_name",
         "parent_co",
-        "rspo", 
         "risk_score_current",
         "risk_score_past",
         "risk_score_future",
-        "geometry"
+        "rspo", 
+        "state", 
+        "sub_state",
+        "umlid"
     ]
 
     MILLSHORT_ATTRS = [
-        "umlid", 
-        "mill_name", 
         "country", 
-        "province", 
-        "district", 
-        "rspo", 
+        "mill_name",
+        "parent_co", 
         "risk_score_current",
         "risk_score_past",
-        "risk_score_future"
+        "risk_score_future",
+        "rspo",
+        "state", 
+        "sub_state", 
+        "umlid"
     ]
 
     MILL_SUMMARY_ATTRS = [
         "forest_area",
         "land_area",
         "remaining_proportion_of_forest",
+        "risk_score_current",
+        "risk_score_future",
+        "risk_score_past",
         "treeloss_2001",
         "treeloss_2002",
         "treeloss_2003",
@@ -94,9 +98,12 @@ class DataFactory:
     ]
 
     def __init__(self):
-        self._mills = pd.read_csv("../sample_data/mills.csv")
         self._brands = pd.read_csv("../sample_data/brands.csv")
         self._uniquemills = pd.read_csv("../sample_data/uniquemills.csv")
+
+        unique_uml_ids = list(self._uniquemills.id)
+        all_mills = pd.read_csv("../sample_data/mills.csv")
+        self._mills = all_mills.query("umlid.str.upper() in @unique_uml_ids")
 
 
     def get_aggregate_brand_stats(self):
@@ -144,14 +151,34 @@ class DataFactory:
         Retrieves a Brand entity by name.
         '''
         chosen_brand = self._brands.query("name == @brand_name")
-        chosen_brand_mills = self._mills.query("brand == @brand_name")
-
-        payload = chosen_brand[self.BRAND_ATTRS].to_dict(orient="records")[0]
-        payload["mills"] = chosen_brand_mills[self.MILLSHORT_ATTRS].to_dict(orient="records")
+        chosen_brand_mills = (self._mills.query("brand == @brand_name")
+                            .sort_values(by="risk_score_future", ascending=False))
+        chosen_brand_mills.rspo.fillna("", inplace=True)
 
         mill_summary = chosen_brand_mills.select_dtypes(include=['float64']).describe()
         mill_summary.drop("count", axis=0, inplace=True)
+        index_map = dict(zip(list(mill_summary.index), self.DISTRIBUTION_ATTRS))
+        mill_summary.rename(index=index_map, inplace=True)
+
+        brand_suppliers = (chosen_brand_mills[["country", "parent_co"]]
+                            .query("parent_co != 'unknown'")
+                            .drop_duplicates()
+                            .sort_values(by=["country", "parent_co"])
+                            .rename(columns={"parent_co": "name"}))
+        brand_supplier_mill_counts = (chosen_brand_mills["parent_co"]
+                                        .value_counts()
+                                        .to_frame()
+                                        .rename(columns={"parent_co" : "mill_count"}))
+        suppliers = (brand_suppliers
+                        .join(brand_supplier_mill_counts, on="name")
+                        .sort_values(by="mill_count", ascending=False))
+
+        payload = chosen_brand[self.BRAND_ATTRS].to_dict(orient="records")[0]
+        payload["mills"] = chosen_brand_mills[self.MILLSHORT_ATTRS].to_dict(orient="records")
+        payload["num_countries_of_operation"] = len(chosen_brand_mills.country.unique())
         payload["stats"] = mill_summary[self.MILL_SUMMARY_ATTRS].to_dict()
+        payload["suppliers"] = suppliers.to_dict(orient="records")
+        payload["risk_score_future_mean"] = chosen_brand_mills["risk_score_future"].mean().round(2)
 
         return payload
 
