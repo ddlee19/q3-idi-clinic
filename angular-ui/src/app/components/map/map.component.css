@@ -2,4 +2,5 @@
     height: 100%;
     align-self: auto;
     margin: 0%;
+    z-index: 1;
 }

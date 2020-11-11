@@ -3,7 +3,7 @@
   box-shadow: 8px 8px 18px #37393a;
 }
 #navbar {
-    z-index: 10000;
+    z-index: 1000;
     box-shadow: 8px 8px 18px #37393a;
 }
 #navlinks div {

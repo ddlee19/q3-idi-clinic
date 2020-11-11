@@ -37,9 +37,88 @@
     Variables
   </div>
   <div class="description">
-    <p>Public information coming from various consumer brands is matched with data for the Global Forest Watch's
-      <a href='https://data.globalforestwatch.org/datasets/5c026d553ff049a585b90c3b1d53d4f5_34'>Universal Mill List</a>. 
-      A calculation in which the previous two years of deforestation is used to calculate deforestation risk score.</p>
+    <div class="ui small header">
+      Treeloss Sum
+    </div>
+    <ul>
+      <li>Sum of treeloss over time, where land has gone from "forest" to "non-forest" state.</li>
+    </ul>
+
+    <div class="ui small header">
+      Land Area
+    </div>
+    <ul>
+      <li>Pixels where there is mapped land compared to no ocean or no data.</li>
+    </ul>
+
+    <div class="ui small header">
+      Forest Area
+    </div>
+    <ul>
+      <li>Pixels where there is land was in a "forest" state in 2000.</li>
+    </ul>
+
+    <div class="ui small header">
+      Treeloss 2019
+    </div>
+    <ul>
+      <li>Treeloss in 2019, where land has gone from "forest" to "non-forest" state.</li>
+    </ul>
+
+    <div class="ui small header">
+      Treeloss Sum Proporiton of Land
+    </div>
+    <ul>
+      <li>Treeloss sum divided by land area.</li>
+    </ul>
+
+    <div class="ui small header">
+      Treeloss Sum Proporiton of Forest
+    </div>
+    <ul>
+      <li>Treeloss sum divided by forest area.</li>
+    </ul>
+
+    <div class="ui small header">
+      Remaining Proportion of Forest
+    </div>
+    <ul>
+      <li>1 - treeloss sum proportion of forest. Fraction of forest that has not experienced loss.</li>
+    </ul>
+
+    <div class="ui small header">
+      Current Risk Score
+    </div>
+    <p class="description">Calculated risk score based on most recent 2 years worth of data.</p>
+    <p>Calculation:</p>
+    <ol>
+      <li>Average treeloss area over the specified years (currently 2018-2019).</li>
+      <li>Convert averages to z-score.</li>
+      <li>Convert to risk score (1-5) where 1: z<-1, 2: -1<=z<-.5, 3: -.5<=z<.5, 4: .5<=z<1, 5: z>=1</li>
+    </ol>
+
+    <div class="ui small header">
+      Past Risk Score
+    </div>
+    <p class="description">Calculated risk score based on past treeloss.</p>
+    <p>Calculation:</p>
+    <ol>
+      <li>Convert treeloss sum proportion of forest to z-score.</li>
+      <li>Convert averages to z-score.</li>
+      <li>Convert to risk score (1-5) where 1: z<-1, 2: -1<=z<-.5, 3: -.5<=z<.5, 4: .5<=z<1, 5: z>=1</li>
+    </ol>
+
+    <div class="ui small header">
+      Future Risk Score
+    </div>
+    <p class="description">Calculated risk score based on past treeloss.</p>
+    <p>Calculation:</p>
+    <ol>
+      <li>Convert remaining proportion of forest to z-score..</li>
+      <li>Convert averages to z-score.</li>
+      <li>Convert to risk score (1-5) where 1: z<-1, 2: -1<=z<-.5, 3: -.5<=z<.5, 4: .5<=z<1, 5: z>=1</li>
+    </ol>
+
   </div>
   
 </div>
@@ -47,12 +126,8 @@
 
 
   <div class="actions">
-    <div class="ui black deny button">
-      Nope
-    </div>
-    <div class="ui positive right labeled icon button">
-      Yep, that's me
-      <i class="checkmark icon"></i>
+    <div class="ui positive right icon button">
+      Exit
     </div>
   </div>
 </div>
