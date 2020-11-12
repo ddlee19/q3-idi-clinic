@@ -7,17 +7,13 @@
 
 import os
 import requests
-import json
-import pandas as pd
 
 from flask import Flask, jsonify, render_template, abort, make_response, request
 from flask_cors import CORS, cross_origin
-from log_util import logger
-from map_util.map_builder import get_tile_urls
+from utilities.log_util import logger
+from utilities.map_builder import get_tile_urls
 from data_factory import DataFactory
 
-
-MILLS_URL = "https://opendata.arcgis.com/datasets/5c026d553ff049a585b90c3b1d53d4f5_34.geojson"
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -49,6 +45,7 @@ def get_aggregate_brand_stats():
 
 
 @app.route('/api/v1.0/mills/<string:mill_id>', methods=['GET'])
+@cross_origin()
 def get_mill(mill_id):
     if not factory.is_valid_mill_id(mill_id):
         abort(404)
@@ -74,6 +71,7 @@ def get_tiles():
 
 
 @app.errorhandler(404)
+@cross_origin()
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 

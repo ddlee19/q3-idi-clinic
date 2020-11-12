@@ -30,7 +30,7 @@ class DataFactory:
         "country",
         "latitude",
         "longitude",
-        "geometry"
+        "geometry",
         "mill_co",
         "mill_name",
         "parent_co",
@@ -98,11 +98,13 @@ class DataFactory:
     ]
 
     def __init__(self):
+        # Read in data files
         self._brands = pd.read_csv("../sample_data/brands.csv")
         self._uniquemills = pd.read_csv("../sample_data/uniquemills.csv")
-
-        unique_uml_ids = list(self._uniquemills.id)
         all_mills = pd.read_csv("../sample_data/mills.csv")
+
+        # Ensure brand mills are only those represented on the UML
+        unique_uml_ids = list(self._uniquemills.id)
         self._mills = all_mills.query("umlid.str.upper() in @unique_uml_ids")
 
 
@@ -130,62 +132,38 @@ class DataFactory:
 
     def get_aggregate_mill_stats(self):
         '''
-        Retrieves statistics computed across *all* mills.
+        Retrieves statistics computed across *all* mills in the UML.
         '''
-        # summary_df = self._mills.select_dtypes(include=['float64']).describe()
-        # summary_df.drop('count', axis=0, inplace=True)
-        # index_map = dict(zip(list(summary_df.index), self.DISTRIBUTION_ATTRS))
-        # summary_df.rename(index=index_map, inplace=True)
-
-        df = self._uniquemills
+        df = self._mills
         summary_df = df.select_dtypes(include=['float64']).describe()
         summary_df.drop('count', axis=0, inplace=True)
-        summary_df.drop(columns=['latitude_x', 'latitude_y', 'longitude_x', 'longitude_y'], inplace=True)
-        payload = summary_df.to_dict()
+        index_map = dict(zip(list(summary_df.index), self.DISTRIBUTION_ATTRS))
+        summary_df.rename(index=index_map, inplace=True)
 
-        return payload
+        return summary_df[self.MILL_SUMMARY_ATTRS].to_dict()
 
 
     def get_brand(self, brand_name):
         '''
-        Retrieves a Brand entity by name.
+        Retrieves a detailed Brand entity by name.
         '''
-        chosen_brand = self._brands.query("name == @brand_name")
-        chosen_brand_mills = (self._mills.query("brand == @brand_name")
-                            .sort_values(by="risk_score_future", ascending=False))
-        chosen_brand_mills.rspo.fillna("", inplace=True)
+        brand = self._brands.query("name == @brand_name")
+        brand_mills = self._mills.query("brand == @brand_name").sort_values(by="risk_score_future")
+        brand_mills.rspo.fillna("", inplace=True)
 
-        mill_summary = chosen_brand_mills.select_dtypes(include=['float64']).describe()
-        mill_summary.drop("count", axis=0, inplace=True)
-        index_map = dict(zip(list(mill_summary.index), self.DISTRIBUTION_ATTRS))
-        mill_summary.rename(index=index_map, inplace=True)
-
-        brand_suppliers = (chosen_brand_mills[["country", "parent_co"]]
-                            .query("parent_co != 'unknown'")
-                            .drop_duplicates()
-                            .sort_values(by=["country", "parent_co"])
-                            .rename(columns={"parent_co": "name"}))
-        brand_supplier_mill_counts = (chosen_brand_mills["parent_co"]
-                                        .value_counts()
-                                        .to_frame()
-                                        .rename(columns={"parent_co" : "mill_count"}))
-        suppliers = (brand_suppliers
-                        .join(brand_supplier_mill_counts, on="name")
-                        .sort_values(by="mill_count", ascending=False))
-
-        payload = chosen_brand[self.BRAND_ATTRS].to_dict(orient="records")[0]
-        payload["mills"] = chosen_brand_mills[self.MILLSHORT_ATTRS].to_dict(orient="records")
-        payload["num_countries_of_operation"] = len(chosen_brand_mills.country.unique())
-        payload["stats"] = mill_summary[self.MILL_SUMMARY_ATTRS].to_dict()
-        payload["suppliers"] = suppliers.to_dict(orient="records")
-        payload["risk_score_future_mean"] = chosen_brand_mills["risk_score_future"].mean().round(2)
+        payload = brand[self.BRAND_ATTRS].to_dict(orient="records")[0]
+        payload["mills"] = brand_mills[self.MILLSHORT_ATTRS].to_dict(orient="records")
+        payload["num_countries_of_operation"] = len(brand_mills.country.unique())
+        payload["stats"] = self.summarize_mills(brand_mills)
+        payload["suppliers"] = self.get_mill_suppliers(brand_mills)
+        payload["risk_score_future_mean"] = brand_mills["risk_score_future"].mean().round(2)
 
         return payload
 
 
-    def get_brands(self, mill_id=None, sort_col=None):
+    def get_brands(self, mill_id=None):
         '''
-        Retrieves a list of BrandShort entities, optionally by mill id.
+        Retrieves a list of Brand entities, optionally by mill id.
         '''     
         if self.is_valid_mill_id(mill_id):
             brand_names = self._mills.query("umlid == @mill_id").brand.tolist()
@@ -221,7 +199,8 @@ class DataFactory:
         Retrieves a mill by its unique identifier.
         '''
         chosen_mill = self._mills.query("umlid == @mill_id").iloc[0]
-        payload = chosen_mill[self.MILL_ATTRS].to_dict()
+        payload = chosen_mill[self.MILL_ATTRS]
+        payload = payload.to_dict()
         payload["brands"] = self.get_brands(mill_id)
 
         return payload
@@ -259,13 +238,45 @@ class DataFactory:
         Retrieves all mills.
         '''
         mill_brands = self._mills.groupby("umlid").agg({"brand":lambda b: list(b)})
-        #unique_mills = self._mills.drop_duplicates("umlid")[self.MILL_ATTRS]
         mills = self._uniquemills.join(mill_brands, on="umlid")
         
         gdf = gpd.GeoDataFrame(mills)
         gdf["geometry"] = gdf["geometry"].apply(wkt.loads)
         gdf.set_geometry("geometry")
         return gdf.to_json()
+
+
+    def get_mill_suppliers(self, mills):
+        '''
+        Generates a list of mill suppliers/parent companies.
+        '''
+        suppliers = (mills[["country", "parent_co"]]
+                        .query("parent_co != 'unknown'")
+                        .drop_duplicates()
+                        .sort_values(by=["country", "parent_co"])
+                        .rename(columns={"parent_co": "name"}))
+
+        supplier_mill_counts = (mills["parent_co"]
+                                    .value_counts()
+                                    .to_frame()
+                                    .rename(columns={"parent_co" : "mill_count"}))
+        suppliers = (suppliers
+                        .join(supplier_mill_counts, on="name")
+                        .sort_values(by="mill_count", ascending=False))
+
+        return suppliers.to_dict(orient="records")
+
+
+    def summarize_mills(self, mills):
+        '''
+        Provides summary stats for a list of mills.
+        '''
+        mill_summary = mills.select_dtypes(include=['float64']).describe()
+        mill_summary.drop("count", axis=0, inplace=True)
+        index_map = dict(zip(list(mill_summary.index), self.DISTRIBUTION_ATTRS))
+        mill_summary.rename(index=index_map, inplace=True)
+
+        return mill_summary[self.MILL_SUMMARY_ATTRS].to_dict()
 
 
     def is_valid_brand_name(self, brand_name):
