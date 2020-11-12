@@ -99,7 +99,7 @@ export class MapComponent implements AfterViewInit  {
   * Returns a style object for a mill based on its future risk score.
   */
   private getMillStyleObject(millFeature: any): object{
-    let score = millFeature.properties.risk_score_future;
+    let score = millFeature.properties.risk_score_current;
 
     if (score == 1) {
       return {color: "#ffc743", fillColor:"#ffc743", opacity: 0.2};

@@ -7,6 +7,9 @@ import { TreeCoverStats } from './stats-treecover.interface';
 */
 export interface BrandAggregateStats {
 
+    /** The average number of hectares lost per brand */
+    avg_hectares_lost: number;
+
     /** A list of all brands in the supply chain */
     brands: Brand[];
 

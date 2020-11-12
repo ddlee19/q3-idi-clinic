@@ -5,8 +5,8 @@
         <div class="sixteen wide column">
             <div class="ui inverted statistics">
                 <div class="ui red inverted statistic">
-                    <div class="value">XXX,XXX</div>
-                    <div class="label">Hectares of Forest Lost</div>
+                    <div class="value">{{aggBrandStats?.avg_hectares_lost | number}}</div>
+                    <div class="label">Average Hectares of Forest Lost</div>
                 </div>
             </div>
             <div class="ui tiny inverted statistics">
@@ -26,7 +26,7 @@
                 </div>
                 <div class="ui statistic">
                     <div class="value">{{aggBrandStats?.total_num_mills | number}}</div>
-                    <div class="label">Mills</div>
+                    <div class="label">UML Mills</div>
                 </div>
             </div>
         </div>
@@ -40,14 +40,14 @@
                     <th>Rank</th>
                     <th>Name</th>
                     <th>Country</th>
-                    <th>Future Risk Score</th>
+                    <th>Current Risk</th>
                 </tr>
             </thead>
             <tr *ngFor="let brandRank of aggBrandStats?.brands; let i = index">
                 <td>{{i+1}}</td>
                 <td>{{brandRank.name}}</td>
                 <td>{{brandRank.country}}</td>
-                <td>{{brandRank.risk_score_future_mean}}</td>
+                <td>{{brandRank.agg_geoms_risk_score_current}}</td>
             </tr>
         </table>
     </div>

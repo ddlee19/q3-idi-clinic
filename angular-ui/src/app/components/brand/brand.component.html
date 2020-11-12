@@ -22,9 +22,9 @@
                 <div class="ui small inverted header center aligned">Stats</div>
                 <div class="ui inverted orange statistics center aligned">
                     <div class="statistic">
-                      <div class="value">{{brand.risk_score_future_mean}}</div>
+                      <div class="value">{{brand.agg_geoms_risk_score_current}}</div>
                       <div class="label">
-                          Future Risk of Deforestation
+                          Current Risk of Deforestation
                           <i class="info icon link inverted circular blue"></i>
                         </div>
                     </div>
@@ -74,7 +74,7 @@
                             <tr>
                                 <th></th>
                                 <th>Name</th>
-                                <th>Score</th>
+                                <th>Current Risk</th>
                                 <th>Country</th>
                                 <th>State</th>
                                 <th>Sub-State</th>
@@ -84,7 +84,7 @@
                         <tr *ngFor="let mill of brand.mills; let i = index">
                             <td>{{i+1}}</td>
                             <td>{{mill.mill_name}}</td>
-                            <td class="center aligned">{{mill.risk_score_future}}</td>
+                            <td class="center aligned">{{mill.risk_score_current}}</td>
                             <td>{{mill.country}}</td>
                             <td>{{mill.state}}</td>
                             <td>{{mill.sub_state}}</td>

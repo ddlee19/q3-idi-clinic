@@ -24,6 +24,9 @@ class DataFactory:
         "name",
         "risk_score_future_mean",
         "rspo_member_since",
+        "agg_geoms_risk_score_current",
+        "agg_geoms_risk_score_past",
+        "agg_geoms_risk_score_future"
     ]
 
     MILL_ATTRS = [
@@ -101,6 +104,7 @@ class DataFactory:
         # Read in data files
         self._brands = pd.read_csv("../sample_data/brands.csv")
         self._uniquemills = pd.read_csv("../sample_data/uniquemills.csv")
+        self._uniquebrands = pd.read_csv("../sample_data/uniquebrands.csv")
         all_mills = pd.read_csv("../sample_data/mills.csv")
 
         # Ensure brand mills are only those represented on the UML
@@ -119,6 +123,7 @@ class DataFactory:
 
         payload = {}
         payload["brands"] = self.get_brands()
+        payload["avg_hectares_lost"] = int(self._uniquebrands["treeloss_sum"].mean())
         payload["dist_of_brand_avgs_for_treecover"] = summary_df[self.MILL_SUMMARY_ATTRS].to_dict()
         payload["mill_dist_all"] = self.get_mill_dist_for_brands()
         payload["mill_dist_rspo"] = self.get_mill_dist_for_brands(rspo_filter="rspo")
@@ -151,7 +156,12 @@ class DataFactory:
         brand_mills = self._mills.query("brand == @brand_name").sort_values(by="risk_score_future")
         brand_mills.rspo.fillna("", inplace=True)
 
+        brand_dissolved_geoms = self._uniquebrands.query("brand == @brand_name").iloc[0]
+
         payload = brand[self.BRAND_ATTRS].to_dict(orient="records")[0]
+        payload["agg_geoms_risk_score_past"] = int(brand_dissolved_geoms["risk_score_past"])
+        payload["agg_geoms_risk_score_current"] = int(brand_dissolved_geoms["risk_score_current"])
+        payload["agg_geoms_risk_score_future"] = int(brand_dissolved_geoms["risk_score_future"])
         payload["mills"] = brand_mills[self.MILLSHORT_ATTRS].to_dict(orient="records")
         payload["num_countries_of_operation"] = len(brand_mills.country.unique())
         payload["stats"] = self.summarize_mills(brand_mills)
@@ -182,6 +192,11 @@ class DataFactory:
             chosen_brands["mill_count"] - chosen_brands["mill_count_rspo"]
         )
 
+        fields = ["brand", "risk_score_past", "risk_score_current", "risk_score_future"]
+        agg_geos_brand_risk_scores = self._uniquebrands[fields].set_index("brand")
+        agg_geos_brand_risk_scores.columns = ["agg_geoms_risk_score_past", "agg_geoms_risk_score_current", "agg_geoms_risk_score_future"]
+        chosen_brands = chosen_brands.join(agg_geos_brand_risk_scores, on="name")
+    
         brand_scores = (self._mills.groupby("brand")["risk_score_future"]
                             .mean()
                             .round(2)

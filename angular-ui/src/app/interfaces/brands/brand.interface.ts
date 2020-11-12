@@ -5,6 +5,10 @@ import { TreeCoverStats } from '../stats/stats-treecover.interface';
  */
 export interface Brand {
 
+    agg_geoms_risk_score_current: number;
+    agg_geoms_risk_score_past: number;
+    agg_geoms_risk_score_future: number;
+
     /** The country where the brand is headquartered. */
     country: string;
 
