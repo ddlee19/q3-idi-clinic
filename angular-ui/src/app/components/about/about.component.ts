@@ -1,22 +1,21 @@
-import { Component, AfterViewInit } from '@angular/core';
-import * as $ from 'jquery';
-import * as S from 'semantic-ui-modal'
+import { Component, OnInit } from '@angular/core';
+//import * as $ from "jquery";
+declare var $: any 
 
 @Component({
   selector: 'app-about',
   templateUrl: './about.component.html',
   styleUrls: ['./about.component.css']
 })
-export class AboutComponent implements AfterViewInit {
 
-  launchModal() {
-    // Sample code from 'https://semantic-ui.com/modules/modal.html#/definition'
-  }
+export class AboutComponent implements OnInit {
+
+
 
   constructor() { }
 
-  ngAfterViewInit(): void {
-    this.launchModal()
+  ngOnInit(): void {
+    
   }
 
 }
