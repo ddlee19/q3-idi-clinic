@@ -333,14 +333,6 @@ def build_risk_data(input_file_path, output_file_path, id_col, years = [2018, 20
         # of past tree loss
         loss_df['risk_score_past'] = get_risk_from_z(loss_df, 'past_risk_z')
 
-        # Create a new column that is the z-score for the remaining
-        # tree cover proportion.
-        loss_df['future_risk_z'] = get_z(loss_df, 'remaining_proportion_of_forest')
-
-        # Create a new column that is the risk (1-5) associated with z-score
-        # of past tree loss
-        loss_df['risk_score_future'] = get_risk_from_z(loss_df, 'future_risk_z')
-
 
         # Create a new column that is the mean treeloss for specified years.
         mean_col = 'mean_loss_'
@@ -350,19 +342,37 @@ def build_risk_data(input_file_path, output_file_path, id_col, years = [2018, 20
         col_list = ['treeloss_' + str(year) for year in years]
         loss_df[mean_col] = loss_df.loc[:, col_list].mean(axis=1)
 
-        # Create a new column that is the z-score for the mean treeloss.
-        z_col = mean_col + "_z"
-        loss_df[z_col] = get_z(loss_df, mean_col)
+        # Create a new colum that is the mean treeloss as a proportion of forest.
+        mean_prop_col = mean_col + '_proportion'
+        loss_df[mean_prop_col] = loss_df[mean_col]/loss_df['forest_area']
+
+        # Create a new column that is the z-score for the mean treeloss as a
+        # proportion of forest.
+        current_z_col = mean_prop_col + "_z"
+        loss_df[current_z_col] = get_z(loss_df, mean_prop_col)
 
         # Convert z-score to risk (1-5)
-        loss_df['risk_score_current'] = get_risk_from_z(loss_df, z_col)
+        loss_df['risk_score_current'] = get_risk_from_z(loss_df, current_z_col)
+
+        # Create a new column that is the z-score for the remaining
+        # tree cover proportion.
+        loss_df['remaining_forest_z'] = get_z(loss_df, 'remaining_proportion_of_forest')
+
+        # Create a new column that is 0.5*remaining proportion of forest z-score,
+        # and 0.5*z-score for the mean current treeloss proportion of forest.
+        loss_df['future_risk_z'] = 0.5*loss_df['remaining_forest_z'] + \
+                                          0.5*loss_df[current_z_col]
+
+        # Create a new column that is the risk (1-5) associated with z-score
+        # of past tree loss
+        loss_df['risk_score_future'] = get_risk_from_z(loss_df, 'future_risk_z')
 
         # risk_df includes UMLid and risk_score columns only
         risk_df = loss_df.loc[:, [id_col,
                                   'risk_score_current',
                                   'risk_score_past',
                                   'risk_score_future']]
-
+        
         # Write out risk_df to CSV
         write_df(risk_df, output_file_path, index = False)
 
