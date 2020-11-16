@@ -35,9 +35,9 @@ def write_df(df, path, index=False):
 
 """Writes geodataframe to geojson.
 """
-def write_geojson(mills_gdf, path):
+def write_geojson(gdf, path):
     try:
-        mills_gdf.to_file(path, driver='GeoJSON')
+        gdf.to_file(path, driver='GeoJSON')
         logger.info('Completed writing %s' % path)
     except Exception as e:
         logger.error('Failed writing %s' % path)

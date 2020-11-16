@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ApiService } from '../../services/api.service'
-import { BrandFilter } from '../../interfaces/brand-filter.interface';
+import { Brand } from '../../interfaces/brands/brand.interface';
 
 
 @Component({
@@ -10,7 +10,7 @@ import { BrandFilter } from '../../interfaces/brand-filter.interface';
 })
 export class BrandFilterComponent implements OnInit {
 
-  filters: BrandFilter[];
+  filters: Brand[];
   @Input() showBrands: boolean = false;
   @Output() closeFilterEvent = new EventEmitter<string>();
   @Output() brandSelectedEvent = new EventEmitter<number>();
@@ -19,7 +19,7 @@ export class BrandFilterComponent implements OnInit {
   * Gets the list of consumer brands from the server.
   */
   private async getBrandFilters(): Promise<void> {
-    this.filters = await this.apiService.getBrandFilters();
+    this.filters = await this.apiService.getBrands();
   }
 
   /**

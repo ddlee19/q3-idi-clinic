@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
+declare var $: any 
+
 @Component({
   selector: 'app-about',
   templateUrl: './about.component.html',
@@ -7,14 +9,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AboutComponent implements OnInit {
 
-  launchModal() {
-    // Sample code from 'https://semantic-ui.com/modules/modal.html#/definition'
-    //$('.ui.modal').modal('show');
-  }
-
   constructor() { }
 
-  ngOnInit(): void {
+  ngOnInit(): void {  
   }
-
 }

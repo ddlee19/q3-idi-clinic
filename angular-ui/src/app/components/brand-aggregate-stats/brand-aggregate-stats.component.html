@@ -5,34 +5,34 @@
         <div class="sixteen wide column">
             <div class="ui inverted statistics">
                 <div class="ui red inverted statistic">
-                    <div class="value">{{aggBrandStats.netTreeLoss | number}}</div>
-                    <div class="label">Hectares of Forest Lost</div>
+                    <div class="value">{{aggBrandStats?.avg_hectares_lost_per_brand | number}}</div>
+                    <div class="label">Average Hectares of Forest Lost</div>
                 </div>
             </div>
             <div class="ui tiny inverted statistics">
                 <div class="ui statistic">
-                    <div class="value">{{aggBrandStats.totalNumConsumerBrands | number}}</div>
+                    <div class="value">{{aggBrandStats?.brands.length | number}}</div>
                     <div class="label">Brands</div>
                 </div>
                 <div class="ui statistic">
-                    <div class="value">{{aggBrandStats.totalNumCountries | number}}</div>
-                    <div class="label">Countries</div>
+                    <div class="value">{{aggBrandStats?.total_num_countries | number}}</div>
+                    <div class="label">{{aggBrandStats?.total_num_countries == 1 ? "Country" : "Countries"}}</div>
                 </div>
             </div>
             <div class="ui tiny inverted statistics">
                 <div class="ui statistic">
-                    <div class="value">{{aggBrandStats.totalNumSuppliers | number}}</div>
+                    <div class="value">{{aggBrandStats?.total_num_suppliers | number}}</div>
                     <div class="label">Suppliers</div>
                 </div>
                 <div class="ui statistic">
-                    <div class="value">{{aggBrandStats.totalNumMills | number}}</div>
-                    <div class="label">Mills</div>
+                    <div class="value">{{aggBrandStats?.total_num_mills_with_brands | number}}</div>
+                    <div class="label">UML Mills</div>
                 </div>
             </div>
         </div>
     </div>
-    <app-brand-agg-tree-loss-chart [totalTreeLossByYear]="aggBrandStats.totalTreeLossByYear"></app-brand-agg-tree-loss-chart>
-    <div class="ui small inverted header center aligned">Highest Ranked Brands</div>
+    <app-brand-agg-tree-loss-chart [treeCoverStats]="aggBrandStats.dist_of_brand_avgs_for_treecover"></app-brand-agg-tree-loss-chart>
+    <div class="ui small inverted header center aligned">Brand Deforestation Risk</div>
     <div id="best-brands">
         <table class="ui small single line selectable inverted celled table">
             <thead>
@@ -40,33 +40,14 @@
                     <th>Rank</th>
                     <th>Name</th>
                     <th>Country</th>
-                    <th>Absolute Score</th>
+                    <th>Current Risk</th>
                 </tr>
             </thead>
-            <tr *ngFor="let brandRank of aggBrandStats.topBrands; let i = index">
+            <tr *ngFor="let brandRank of aggBrandStats?.brands; let i = index">
                 <td>{{i+1}}</td>
-                <td>{{brandRank.name}}</td>
+                <td>{{brandRank.brand}}</td>
                 <td>{{brandRank.country}}</td>
-                <td>{{brandRank.absoluteScore}}</td>
-            </tr>
-        </table>
-    </div>
-    <div class="ui small inverted header center aligned">Lowest Ranked Brands</div>
-    <div id="bottom-brands">
-        <table class="ui small single line selectable inverted celled table">
-            <thead>
-                <tr>
-                    <th>Rank</th>
-                    <th>Name</th>
-                    <th>Country</th>
-                    <th>Absolute Score</th>
-                </tr>
-            </thead>
-            <tr *ngFor="let brandRank of aggBrandStats.bottomBrands; let i = index">
-                <td>{{aggBrandStats.totalNumConsumerBrands - i}}</td>
-                <td>{{brandRank.name}}</td>
-                <td>{{brandRank.country}}</td>
-                <td>{{brandRank.absoluteScore}}</td>
+                <td>{{brandRank.risk_score_current}}</td>
             </tr>
         </table>
     </div>
