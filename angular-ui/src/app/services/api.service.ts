@@ -1,16 +1,17 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { TileUrl } from '../interfaces/tile-urls.interface';
-import { Mill, MillFeatureCollection } from '../interfaces/mill.interface';
+import { MillFeatureCollection } from '../interfaces/mill.interface';
 import { BrandAggregateStats } from '../interfaces/brands/brand-agg-stats.interface';
 import { Brand } from '../interfaces/brands/brand.interface';
 import { DetailedBrand } from '../interfaces/brands/brand-detailed.interface';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-  private apiBase = "http://localhost:5000/api/v1.0/"
+  private apiBase: string = environment.apiBase
 
   /** GET aggregate consumer brand statistics from the server */
   getBrandAggregateStats(): Promise<BrandAggregateStats> {
