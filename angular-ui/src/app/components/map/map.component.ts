@@ -13,7 +13,6 @@ export class MapComponent implements AfterViewInit  {
   readonly attribution = { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' }
   readonly lightMapUrl = 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png';
   readonly darkMapUrl = 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png';
-  readonly treecover2000Url = 'https://earthengine.googleapis.com/v1alpha/projects/earthengine-legacy/maps/a022709a1272804981d6f0aea9474863-fd228b2f7d4d5741901d7650ad513751/tiles/{z}/{x}/{y}'
   readonly indonesiaLat = -0.7893;
   readonly indonesiaLong = 113.9213;
   readonly initialZoomLevel = 6;
@@ -41,7 +40,9 @@ export class MapComponent implements AfterViewInit  {
     });
 
     // Create tree cover 2000 tile layer
-    let treecoverLayer = L.tileLayer(this.treecover2000Url, this.attribution)
+    let tileUrls = await this.apiService.getTileUrls()
+    let treeCover2000Url = tileUrls.filter(t => t.tileSetName == "treecover2000")[0].tileUrl
+    let treecoverLayer = L.tileLayer(treeCover2000Url, this.attribution)
 
     // Create mill marker and mill polygon layers
     let millFeatureCollection = await this.apiService.getMills();
@@ -95,6 +96,7 @@ export class MapComponent implements AfterViewInit  {
       return [L.layerGroup(markers), radiiLayer];
   }
 
+
   /**
   * Returns a style object for a mill based on its future risk score.
   */
@@ -147,18 +149,18 @@ export class MapComponent implements AfterViewInit  {
   /**
   * Filters mill markers displayed on the map by brand.
   */
-  private filterMills(brandName: string): void{
+  private filterMills(brandId: number): void{
 
     // If user clears brand selection, reset to default view showing all mills
-    if (brandName == null){
+    if (brandId == null){
       this.mapLayerClient?.resetMillsLayers();
       return;
     }
 
     // Otherwise, filter by brand
     let filteredMillFeatures = this.millFeatures.filter(mill => {
-      let brands = mill.properties.brand;
-      if (brands !== null && brands.includes(brandName)){
+      let brand_ids = mill.properties.brand_ids;
+      if (brand_ids !== null && brand_ids.includes(brandId)){
         return mill;
       }
     });
@@ -168,7 +170,7 @@ export class MapComponent implements AfterViewInit  {
     let filteredMillsLayer = filteredLayers[0];
     let filteredMillsRadiiLayer = filteredLayers[1];
 
-    // Call client to replace any existing mill layers with filtered layers
+    // Replace any existing mill layers with filtered layers
     this.mapLayerClient.filterMillsLayers(filteredMillsLayer, 
                                           filteredMillsRadiiLayer);
   }

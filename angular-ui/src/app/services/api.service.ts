@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { TileUrl } from '../interfaces/tile-urls.interface';
 import { Mill, MillFeatureCollection } from '../interfaces/mill.interface';
-import { BrandAggregateStats } from '../interfaces/stats/stats-brand-agg.interface';
+import { BrandAggregateStats } from '../interfaces/brands/brand-agg-stats.interface';
 import { Brand } from '../interfaces/brands/brand.interface';
 import { DetailedBrand } from '../interfaces/brands/brand-detailed.interface';
 

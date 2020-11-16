@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, Input } from '@angular/core';
-import { TreeCoverStats } from 'src/app/interfaces/stats/stats-treecover.interface';
+import { TreeCoverAverageStats } from 'src/app/interfaces/stats/stats-treecover-avg.interface';
 import * as CJS from 'chart.js'
 
 @Component({
@@ -8,7 +8,7 @@ import * as CJS from 'chart.js'
   styleUrls: ['./brand-agg-tree-loss-chart.component.css']
 })
 export class BrandAggTreeLossChartComponent implements AfterViewInit {
-  @Input() treeCoverStats: TreeCoverStats;
+  @Input() treeCoverStats: TreeCoverAverageStats;
 
   private initMap(): void {
     let years = Array.from(new Array(19), (x, i) => i + 2001);

@@ -63,7 +63,7 @@ class DAL:
             chosen_brands = self._brands
 
         return (chosen_brands[BRANDSHORT_ATTRS]
-                .sort_values("risk_score_future", ascending=False)
+                .sort_values("risk_score_current", ascending=False)
                 .to_dict(orient="records"))
 
 
@@ -142,12 +142,19 @@ class DAL:
         '''
         Retrieves all mills on the UML list.
         '''
-        mill_brand_names = self._brand_mills_full[["umlid", "brand"]].set_index("umlid")
+        mill_brand_ids = (self._brand_mills_thin[["umlid", "brandid"]]
+                            .set_index("umlid"))
+
+        brand_ids_list_func = lambda b: list(b.astype(int)) if b.any() else []
+
         mill_brands = (self._mills
-                        .join(mill_brand_names, on="umlid")
+                        .join(mill_brand_ids, on="umlid")
                         .groupby("umlid")
-                        .agg({"brand":lambda b: list(b)}))
-        mills = self._mills.join(mill_brands, on="umlid")[MILL_ATTRS]
+                        .agg({"brandid": brand_ids_list_func}))
+                        
+        mill_brands.columns = ["brand_ids"]
+
+        mills = self._mills.join(mill_brands, on="umlid")[MILL_ATTRS + ["brand_ids"]]
         
         gdf = gpd.GeoDataFrame(mills)
         gdf["geometry"] = gdf["geometry"].apply(wkt.loads)
@@ -168,7 +175,7 @@ class DAL:
         ids = list(self._brand_mills_thin.query("brandid == @brand_id").umlid)
         mills = (self._mills
                     .query("umlid in @ids")
-                    .sort_values(by="risk_score_future", ascending=False))
+                    .sort_values(by="risk_score_current", ascending=False))
 
         return mills
         

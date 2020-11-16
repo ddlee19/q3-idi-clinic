@@ -4,7 +4,7 @@
             <a id="brand-close" (click)="closeBrand()"><i class="close small fitted inverted red bordered link icon"></i></a>
         </div>
         <div class="ui large inverted header center aligned">
-            {{brand.name}}
+            {{brand.brand}}
             <h4>{{brand.country}}</h4>
         </div>
         <div class="ui divider"></div>
@@ -22,7 +22,7 @@
                 <div class="ui small inverted header center aligned">Stats</div>
                 <div class="ui inverted orange statistics center aligned">
                     <div class="statistic">
-                      <div class="value">{{brand.agg_geoms_risk_score_current}}</div>
+                      <div class="value">{{brand.risk_score_current}}</div>
                       <div class="label">
                           Current Risk of Deforestation
                           <i class="info icon link inverted circular blue"></i>
@@ -33,10 +33,10 @@
                 <div class="ui three tiny inverted statistics">
                     <div class="ui statistic">
                         <div class="value">
-                            {{brand.num_countries_of_operation | number}}
+                            {{brand.country_count | number}}
                         </div>
                         <div class="label">
-                            {{brand.num_countries_of_operation == 1 ? "Country" : "Countries" }}
+                            {{brand.country_count == 1 ? "Country" : "Countries" }}
                         </div>
                     </div>
                     <div class="ui statistic">
@@ -56,7 +56,7 @@
                                 <th></th>
                                 <th>Name</th>
                                 <th>Country</th>
-                                <th>Number Brand Mills</th>
+                                <th>No. Mills for Brand</th>
                             </tr>
                         </thead>
                         <tr *ngFor="let supplier of brand.suppliers; let i = index">
@@ -78,7 +78,7 @@
                                 <th>Country</th>
                                 <th>State</th>
                                 <th>Sub-State</th>
-                                <th>Parent Group</th>
+                                <th>Parent Co</th>
                             </tr>
                         </thead>
                         <tr *ngFor="let mill of brand.mills; let i = index">
@@ -88,7 +88,7 @@
                             <td>{{mill.country}}</td>
                             <td>{{mill.state}}</td>
                             <td>{{mill.sub_state}}</td>
-                            <td>{{mill.parent_co}}</td>
+                            <td>{{mill.prnt_comp}}</td>
                         </tr>
                     </table>
                 </div>

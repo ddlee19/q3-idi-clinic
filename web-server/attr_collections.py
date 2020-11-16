@@ -61,36 +61,36 @@ BRANDSHORT_ATTRS = [
 ]
 
 DISTRIBUTION_ATTR_MAP = {
-    "max": "max",
-    "mean": "mean",
-    "min": "min",
     "25%": "quartile_1",
     "50%": "quartile_2",
     "75%": "quartile_3",
+    "max": "max",
+    "mean": "mean",
+    "min": "min",
     "std": "std"
 }
 
 MILL_ATTRS = [
-    "mill_name",
-    "latitude",
-    "longitude",
-    "rspo_model",
-    "cert",
-    "prnt_comp",
-    "country",
-    "state",
-    "sub_state",
-    "alt_name",
     "address",
+    "alt_name",
+    "cert",
+    "country",
+    "forest_area",
+    "geometry",
     "globalid",
     "group_name",
-    "umlid",
+    "land_area",
+    "latitude",
+    "longitude",
+    "mill_name",
+    "prnt_comp",
+    "remaining_proportion_of_forest",
     "risk_score_current",
     "risk_score_past",
     "risk_score_future",
-    "treeloss_sum",
-    "land_area",
-    "forest_area",
+    "rspo_model",
+    "state",
+    "sub_state",
     "treeloss_2001",
     "treeloss_2002",
     "treeloss_2003",
@@ -110,10 +110,10 @@ MILL_ATTRS = [
     "treeloss_2017",
     "treeloss_2018",
     "treeloss_2019",
-    "treeloss_sum_proportion_of_land",
+    "treeloss_sum",
     "treeloss_sum_proportion_of_forest",
-    "remaining_proportion_of_forest",
-    "geometry"
+    "treeloss_sum_proportion_of_land",
+    "umlid"
 ]
 
 MILLSHORT_ATTRS = [
