@@ -74,6 +74,7 @@ target/
 
 # Private key file for Google Cloud service account
 *private-key.json
+*privatekey.json
 
 # node modules
 *node_modules/

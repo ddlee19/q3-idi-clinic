@@ -10,9 +10,8 @@ import requests
 
 from flask import Flask, jsonify, render_template, abort, make_response, request
 from flask_cors import CORS, cross_origin
-from utilities.log_util import logger
-from utilities.map_builder import get_tile_urls
-from data_factory import DataFactory
+from log_util import logger
+from dal import DAL
 
 
 app = Flask(__name__)
@@ -20,54 +19,54 @@ cors = CORS(app)
 config = {'host': os.environ.get('APP_HOST', '0.0.0.0'), 
           'port': os.environ.get("PORT", 5000),
           'CORS_HEADERS': 'Content-Type'}
-factory = DataFactory()
+dal = DAL()
 
 
-@app.route('/api/v1.0/brands/<string:brand_name>', methods=['GET'])
+@app.route('/api/v1.0/brands/<int:brand_id>', methods=['GET'])
 @cross_origin()
-def get_brand(brand_name):
-    if not factory.is_valid_brand_name(brand_name):
+def get_brand(brand_id):
+    if not dal.is_valid_brand(brand_id):
         abort(404)
-    return jsonify(factory.get_brand(brand_name))
+    return jsonify(dal.get_brand(brand_id))
 
 
 @app.route('/api/v1.0/brands', methods=['GET'])
 @cross_origin()
 def get_brands():
     mill_id = request.args.get("mill_id")
-    return jsonify(factory.get_brands(mill_id))
+    return jsonify(dal.get_brands(mill_id))
 
 
 @app.route("/api/v1.0/brands/stats", methods=['GET'])
 @cross_origin()
 def get_aggregate_brand_stats():
-   return jsonify(factory.get_aggregate_brand_stats())
+   return jsonify(dal.get_brands_aggregate_stats())
 
 
 @app.route('/api/v1.0/mills/<string:mill_id>', methods=['GET'])
 @cross_origin()
 def get_mill(mill_id):
-    if not factory.is_valid_mill_id(mill_id):
+    if not dal.is_valid_uml_mill(mill_id):
         abort(404)
-    return jsonify(factory.get_mill(mill_id))
+    return jsonify(dal.get_mill(mill_id))
 
 
 @app.route("/api/v1.0/mills", methods=['GET'])
 @cross_origin()
 def get_mills():
-    return factory.get_mills()
+    return dal.get_mills()
 
 
 @app.route("/api/v1.0/mills/stats", methods=['GET'])
 @cross_origin()
 def get_mill_stats():
-    return jsonify(factory.get_aggregate_mill_stats())
+    return jsonify(dal.get_mills_aggregate_stats())
 
 
 @app.route("/api/v1.0/tile-urls", methods=['GET'])
 @cross_origin()
 def get_tiles():
-    return jsonify(get_tile_urls())
+    return jsonify(dal.get_map_tile_urls())
 
 
 @app.errorhandler(404)
