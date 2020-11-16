@@ -1,0 +1,88 @@
+### **Get Brands**
+#### /api/v1.0/tile-urls
+
+**Example 1 of 1:**
+```
+[
+  {
+    "tileSetName": "treecover2000", 
+    "tileUrl": "https://earthengine.googleapis.com/v1alpha/projects/earthengine-legacy/maps/a022709a1272804981d6f0aea9474863-c54adac08b544261aeb360db0f7defad/tiles/{z}/{x}/{y}"
+  }, 
+  {
+    "tileSetName": "treecoverloss 2001", 
+    "tileUrl": "https://earthengine.googleapis.com/v1alpha/projects/earthengine-legacy/maps/4bdd0b65aefc809e7be5034ac8650c36-32595819eebe68ec7d73aabd7df358ea/tiles/{z}/{x}/{y}"
+  }, 
+  {
+    "tileSetName": "treecoverloss 2002", 
+    "tileUrl": "https://earthengine.googleapis.com/v1alpha/projects/earthengine-legacy/maps/80efc15ef7c5b6156879e4c2e56843b6-f6ab11c45e12fafd580164c89c257b40/tiles/{z}/{x}/{y}"
+  }, 
+  {
+    "tileSetName": "treecoverloss 2003", 
+    "tileUrl": "https://earthengine.googleapis.com/v1alpha/projects/earthengine-legacy/maps/3f99f94aff96a80388105154cc404764-31fab308d8aebdd38e248235f128f77b/tiles/{z}/{x}/{y}"
+  }, 
+  {
+    "tileSetName": "treecoverloss 2004", 
+    "tileUrl": "https://earthengine.googleapis.com/v1alpha/projects/earthengine-legacy/maps/09bb05fe3610018ac155b0266e82d207-b80c71c6f9cdcfd55895e03dc8f860c6/tiles/{z}/{x}/{y}"
+  }, 
+  {
+    "tileSetName": "treecoverloss 2005", 
+    "tileUrl": "https://earthengine.googleapis.com/v1alpha/projects/earthengine-legacy/maps/9156480bbce46f255cbf9565c3028ca7-502dc60ee1d9d2190c18b5d45c6f1139/tiles/{z}/{x}/{y}"
+  }, 
+  {
+    "tileSetName": "treecoverloss 2006", 
+    "tileUrl": "https://earthengine.googleapis.com/v1alpha/projects/earthengine-legacy/maps/41e663edc91df67ffb7d2b1c2eb3c6d6-c2b77f377ee713def8a4d84e1299f05a/tiles/{z}/{x}/{y}"
+  }, 
+  {
+    "tileSetName": "treecoverloss 2007", 
+    "tileUrl": "https://earthengine.googleapis.com/v1alpha/projects/earthengine-legacy/maps/f1b5301ca4036fb4c248fc7e0f534761-43f03abd58b59071ab15fe4dd0924aea/tiles/{z}/{x}/{y}"
+  }, 
+  {
+    "tileSetName": "treecoverloss 2008", 
+    "tileUrl": "https://earthengine.googleapis.com/v1alpha/projects/earthengine-legacy/maps/b96cc679cbfce2da614dd68fe815dc9c-47e613b4731ddafec4b160abdda090b6/tiles/{z}/{x}/{y}"
+  }, 
+  {
+    "tileSetName": "treecoverloss 2009", 
+    "tileUrl": "https://earthengine.googleapis.com/v1alpha/projects/earthengine-legacy/maps/8d36c6b8c3874009b84c211bb6c40484-4632d1bf9c7575211f77cbe595acc49b/tiles/{z}/{x}/{y}"
+  }, 
+  {
+    "tileSetName": "treecoverloss 2010", 
+    "tileUrl": "https://earthengine.googleapis.com/v1alpha/projects/earthengine-legacy/maps/4b036a648531e890d7e0fa7f1b830e87-e88d860744bed93cfaf05c2333f1c861/tiles/{z}/{x}/{y}"
+  }, 
+  {
+    "tileSetName": "treecoverloss 2011", 
+    "tileUrl": "https://earthengine.googleapis.com/v1alpha/projects/earthengine-legacy/maps/9b3f44e4b70dce63961fc490f41fd03b-5f9b62f5701af225eb9aa19ffd0521f1/tiles/{z}/{x}/{y}"
+  }, 
+  {
+    "tileSetName": "treecoverloss 2012", 
+    "tileUrl": "https://earthengine.googleapis.com/v1alpha/projects/earthengine-legacy/maps/bd66d330324b5f1a2d047fc7ce943548-96cee0c80b1f898729f49775e8bb9d36/tiles/{z}/{x}/{y}"
+  }, 
+  {
+    "tileSetName": "treecoverloss 2013", 
+    "tileUrl": "https://earthengine.googleapis.com/v1alpha/projects/earthengine-legacy/maps/8061b618d0abae7a314d122dd66cdf1c-e4fd81f341adbe48d4892b30bd68354f/tiles/{z}/{x}/{y}"
+  }, 
+  {
+    "tileSetName": "treecoverloss 2014", 
+    "tileUrl": "https://earthengine.googleapis.com/v1alpha/projects/earthengine-legacy/maps/555f495a422fe8dba8f4cbcc9c71293c-db1d69226ea62a6d4287d8fcd0afc616/tiles/{z}/{x}/{y}"
+  }, 
+  {
+    "tileSetName": "treecoverloss 2015", 
+    "tileUrl": "https://earthengine.googleapis.com/v1alpha/projects/earthengine-legacy/maps/bc3a06b99ef18b59cef9143bfd60f0a0-150f1f487d1860dd93ca44d2541a6876/tiles/{z}/{x}/{y}"
+  }, 
+  {
+    "tileSetName": "treecoverloss 2016", 
+    "tileUrl": "https://earthengine.googleapis.com/v1alpha/projects/earthengine-legacy/maps/85fe752b36ec7614ca12bdad11e268df-0a9ef9dfdb75bc7ef1bb236826801fe3/tiles/{z}/{x}/{y}"
+  }, 
+  {
+    "tileSetName": "treecoverloss 2017", 
+    "tileUrl": "https://earthengine.googleapis.com/v1alpha/projects/earthengine-legacy/maps/67c6699562e288036caac3806ccac3b3-27939470df632757687f33c204c7318a/tiles/{z}/{x}/{y}"
+  }, 
+  {
+    "tileSetName": "treecoverloss 2018", 
+    "tileUrl": "https://earthengine.googleapis.com/v1alpha/projects/earthengine-legacy/maps/181b66c0f84781dc42b4ab0d94a52931-a12d8c58ed84eb26b5f5147f1e4f85a1/tiles/{z}/{x}/{y}"
+  }, 
+  {
+    "tileSetName": "treecoverloss 2019", 
+    "tileUrl": "https://earthengine.googleapis.com/v1alpha/projects/earthengine-legacy/maps/aaf78bd44eb2d9567ad860c1a39fc642-8dd54f842f02945c10d5fc7955658f44/tiles/{z}/{x}/{y}"
+  }
+]
+```

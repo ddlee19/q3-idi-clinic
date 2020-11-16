@@ -33,11 +33,23 @@ export interface Mill {
 */
 export interface MillProperties {
 
-    /** The names of all consumer brands associated with the mill. */
-    brand: string[];
+    /** The confidence level for the mill's reported location. */
+    address: string;
+
+    /** The alternative name for the mill, if it exists. */
+    alt_name: string;
+
+    /** The ids of all consumer brands associated with the mill. */
+    brand_ids: number[];
+
+    /** A string indicating whether the mill is RSPO certified. */
+    cert: string;
 
     /** The country in which the mill is located. */
     country: string;
+
+    /** The mill's group name. */
+    group_name: string
 
     /** The mill's latitude. */
     latitude: number;

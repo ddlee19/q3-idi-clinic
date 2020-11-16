@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service'
-import { BrandAggregateStats } from '../../interfaces/stats/stats-brand-agg.interface'
+import { BrandAggregateStats } from '../../interfaces/brands/brand-agg-stats.interface'
 
 
 @Component({

@@ -13,7 +13,7 @@ export class BrandFilterComponent implements OnInit {
   filters: Brand[];
   @Input() showBrands: boolean = false;
   @Output() closeFilterEvent = new EventEmitter<string>();
-  @Output() brandSelectedEvent = new EventEmitter<string>();
+  @Output() brandSelectedEvent = new EventEmitter<number>();
 
   /**
   * Gets the list of consumer brands from the server.
@@ -32,8 +32,8 @@ export class BrandFilterComponent implements OnInit {
   /**
   * Emits an event broadcasting that the user has selected a consumer brand.
   */
-  openConsumerBrand(brandName: string){
-    this.brandSelectedEvent.emit(brandName);
+  openConsumerBrand(brandId: number){
+    this.brandSelectedEvent.emit(brandId);
   }
 
   constructor(private apiService: ApiService) {}
