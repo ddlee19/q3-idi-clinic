@@ -12,8 +12,8 @@ import pandas as pd
 from scipy.spatial import Voronoi
 from shapely.geometry import Point, Polygon
 
-BUFFER_SIZE = 5000
-BUFFER_RES = 12
+BUFFER_SIZE = 10000
+BUFFER_RES = 4
 
 class Vor():
     def __init__(self, data=None):
@@ -28,7 +28,7 @@ class Vor():
                 logger.error("Failed to read UML file.")
 
             self.uml = pd.DataFrame.from_dict(data, orient='index',
-                columns=['latitude', 'longitude'])
+                columns=['umlid','latitude', 'longitude'])
 
         self.latlon_gdf = gpd.GeoDataFrame(self.uml, 
             geometry=gpd.points_from_xy(self.uml.longitude, self.uml.latitude),
@@ -43,6 +43,7 @@ class Vor():
         self.buffered_points = self.build_point_buffer(self._vor)
 
         self.gen_intersections()
+        self.output = self.gen_output()
 
     def build_geom_list(self, gdf):
         x_l = gdf.geometry.x.tolist()
@@ -77,7 +78,7 @@ class Vor():
 
             polygon = Polygon()
             # (A LinearRing must have at least 3 coordinate tuples)
-            if len(coords) >= 3:
+            if len(coords) > 2:
                 polygon = Polygon(coords)
             self.region_map[k]['polygon'] = polygon
 
@@ -91,7 +92,7 @@ class Vor():
 
     def gen_intersections(self):
         for k, pt in self.point_map.items():
-            self.point_map[k]['reduced_poly'] = None
+            self.point_map[k]['boundary_coordss'] = None
             r_idx = pt['region_assigned']
             r_poly = self.region_map[r_idx]['polygon']
             b_poly = self.point_map[k]['buffer']
@@ -99,10 +100,33 @@ class Vor():
             try:
                 intsc = r_poly.intersection(b_poly)
                 boundary = Polygon(intsc.boundary.coords[:])
-                self.point_map[k]['reduced_poly'] = boundary.exterior.coords[:]
+                self.point_map[k]['boundary_shape'] = boundary
+                self.point_map[k]['boundary_coords'] = boundary.exterior.coords[:]
             except Exception as e:
-                print(k, 'TopologicalError')
+                print(k)
                 pass
 
+    def gen_output(self):
+        df = pd.DataFrame(self.point_map.values())
+        df = df [['region_assigned', 'boundary_shape']]
+
+        df2 = self.xy_gdf.reset_index(drop=True)
+        df2 = df2[['umlid']]
+
+        idx_merge = df2.join(df)
+
+        gdf = gpd.GeoDataFrame(idx_merge,
+                            geometry='boundary_shape',
+                            crs={'init' :'epsg:3395'})
+
+        # TODO: missing geometries for 13 mills. See issues with intersections
+        # in shapely docs
+
+        # filter missing or empty geometries
+        s = gdf['boundary_shape']
+        gdf = gdf[~(s.is_empty | s.isna())]
+
+        gdf = gdf.to_crs("EPSG:4326")
+        return gdf
 
 
