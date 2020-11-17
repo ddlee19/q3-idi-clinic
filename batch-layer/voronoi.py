@@ -42,6 +42,8 @@ class Vor():
         self.polygon_map = self.build_polygon_map(self._vor)
         self.buffered_points = self.build_point_buffer(self._vor)
 
+        self.gen_intersections()
+
     def build_geom_list(self, gdf):
         x_l = gdf.geometry.x.tolist()
         y_l = gdf.geometry.y.tolist()
@@ -54,7 +56,6 @@ class Vor():
             region_assigned = vor.point_region[i]
 
             point_map[i] = {
-                'idx': i,
                 'coords': pt_coords,
                 'region_assigned': region_assigned}
         return point_map
@@ -87,3 +88,21 @@ class Vor():
 
             buff_point = Point(x, y).buffer(BUFFER_SIZE, resolution=BUFFER_RES)
             self.point_map[k]['buffer'] = buff_point
+
+    def gen_intersections(self):
+        for k, pt in self.point_map.items():
+            self.point_map[k]['reduced_poly'] = None
+            r_idx = pt['region_assigned']
+            r_poly = self.region_map[r_idx]['polygon']
+            b_poly = self.point_map[k]['buffer']
+
+            try:
+                intsc = r_poly.intersection(b_poly)
+                boundary = Polygon(intsc.boundary.coords[:])
+                self.point_map[k]['reduced_poly'] = boundary.exterior.coords[:]
+            except Exception as e:
+                print(k, 'TopologicalError')
+                pass
+
+
+
