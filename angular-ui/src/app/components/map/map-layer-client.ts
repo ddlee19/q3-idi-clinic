@@ -12,27 +12,23 @@ export class MapLayerClient {
     all_mills_radii_layer: L.GeoJSON;
     filtered_mills_layer: L.LayerGroup;
     filtered_mills_radii_layer: L.LayerGroup;
-    tree_cover_2000_layer: L.TileLayer;
 
     constructor(
         map: L.Map,
         light_base_layer: L.TileLayer,
         dark_base_layer: L.TileLayer,
         all_mills_layer: L.LayerGroup,
-        all_mills_radii_layer: L.GeoJSON,
-        tree_cover_2000_layer: L.TileLayer)
+        all_mills_radii_layer: L.GeoJSON)
     {
         this.map = map;
         this.all_mills_layer = all_mills_layer;
         this.all_mills_radii_layer = all_mills_radii_layer;
         this.light_base_layer = light_base_layer;
         this.dark_base_layer = dark_base_layer;
-        this.tree_cover_2000_layer = tree_cover_2000_layer;
         this.initializeOverlayLayers();
     }
 
     private initializeOverlayLayers(){
-        this.map.addLayer(this.tree_cover_2000_layer);
         this.map.addLayer(this.all_mills_radii_layer);
         this.map.addLayer(this.all_mills_layer);
     }
