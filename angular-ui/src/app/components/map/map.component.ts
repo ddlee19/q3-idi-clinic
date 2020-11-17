@@ -10,8 +10,9 @@ import * as L from 'leaflet';
   styleUrls: ['./map.component.css']
 })
 export class MapComponent implements AfterViewInit  {
-  readonly attribution = { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' }
-  readonly lightMapUrl = 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png';
+  readonly attribution = 'Tiles &copy; Esri & <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  readonly lightMapUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+  readonly labelsUrl = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-hybrid/{z}/{x}/{y}{r}.png';
   readonly darkMapUrl = 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png';
   readonly indonesiaLat = -0.7893;
   readonly indonesiaLong = 113.9213;
@@ -23,14 +24,15 @@ export class MapComponent implements AfterViewInit  {
   private mapLayerClient: MapLayerClient;
   private millFeatures: Mill[];
 
+
   /**
   * Initializes a Leaflet.js map and its layers.
   */
   private async initMap(): Promise<void> {
 
     // Create light and dark base tile layers
-    let lightBaseLayer = L.tileLayer(this.lightMapUrl, this.attribution);
-    let darkBaseLayer = L.tileLayer(this.darkMapUrl, this.attribution);
+    let lightBaseLayer = L.tileLayer(this.lightMapUrl, { maxZoom: 17, attribution: this.attribution });
+    let darkBaseLayer = L.tileLayer(this.darkMapUrl, { attribution: this.attribution });
 
     // Instantiate map with light base layer
     this.map = L.map("map-id", {
@@ -38,11 +40,6 @@ export class MapComponent implements AfterViewInit  {
       zoom: this.initialZoomLevel,
       layers: [lightBaseLayer]
     });
-
-    // Create tree cover 2000 tile layer
-    let tileUrls = await this.apiService.getTileUrls()
-    let treeCover2000Url = tileUrls.filter(t => t.tileSetName == "treecover2000")[0].tileUrl
-    let treecoverLayer = L.tileLayer(treeCover2000Url, this.attribution)
 
     // Create mill marker and mill polygon layers
     let millFeatureCollection = await this.apiService.getMills();
@@ -55,8 +52,7 @@ export class MapComponent implements AfterViewInit  {
       lightBaseLayer,
       darkBaseLayer,
       allMillsLayer,
-      allMillsRadiiLayer,
-      treecoverLayer);
+      allMillsRadiiLayer);
   }
 
   /**
@@ -104,19 +100,19 @@ export class MapComponent implements AfterViewInit  {
     let score = millFeature.properties.risk_score_current;
 
     if (score == 1) {
-      return {color: "#ffc743", fillColor:"#ffc743", opacity: 0.2};
+      return {color: "#ffc743", fillColor:"#ffc743", opacity: 0.1};
     }
     else if (score == 2){
-      return {color: "#fb7337", fillColor:"#fb7337", opacity: 0.2};
+      return {color: "#fb7337", fillColor:"#fb7337", opacity: 0.1};
     }
     else if (score == 3){
-      return {color: "#f60b28", fillColor:"#f60b28", opacity: 0.2};
+      return {color: "#f60b28", fillColor:"#f60b28", opacity: 0.1};
     }
     else if (score == 4){
-      return {color: "#95081b", fillColor:"#95081b", opacity: 0.2};
+      return {color: "#95081b", fillColor:"#95081b", opacity: 0.1};
     }
     else {
-      return {color: "#34040d", fillColor:"#34040d", opacity: 0.2};
+      return {color: "#620000", fillColor:"#620000", opacity: 0.1};
     }
   }
 

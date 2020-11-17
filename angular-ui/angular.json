@@ -28,8 +28,7 @@
             ],
             "scripts": [
               "./node_modules/jquery/dist/jquery.min.js",
-               "./semantic/semantic.min.js"
-
+              "./semantic/semantic.min.js"
             ]
           },
           "configurations": {
