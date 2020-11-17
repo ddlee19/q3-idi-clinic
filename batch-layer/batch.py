@@ -19,6 +19,7 @@ from data_util import (build_uml_data,
                         build_risk_data,
                         get_risk_from_z,
                         get_z)
+from voronoi import Vor
 from log_util import logger
 
 PROJECT = 'idi-development'
@@ -33,6 +34,7 @@ OUTPUT_BRAND_FNAME = 'brands.csv'
 INPUT_BRAND_MATCH_FNAME = 'complete_match_update.tsv'
 INPUT_BRAND_INFO_FNAME = 'brand_info.csv'
 OUTPUT_UML_BOUNDARIES_FNAME = 'uml_boundaries.geojson'
+OUTPUT_UML_VOR_BOUNDARIES_FNAME = 'uml_boundaries.geojson'
 OUTPUT_BIGTABLE_FNAME = 'bigtable.csv'
 MILL_AREAS_RES = 12
 GFC_DATASET_NAME = "UMD/hansen/global_forest_change_2019_v1_7"
@@ -78,6 +80,12 @@ def load_uml_boundaries_data():
                                      input_file_path,
                                      MILL_RADIUS_IN_M,
                                      MILL_AREAS_RES)
+
+"""Builds Voronoi boundaries
+"""
+def load_vor_boundaries_data():
+    v = Vor()
+    return v.output
 
 """Builds loss data for each year 2001-2019
 """
@@ -274,6 +282,9 @@ if __name__ == '__main__':
     uml_boundaries_geodf = load_uml_boundaries_data()
     logger.info("UML boundaries data shape: %s" % str(uml_boundaries_geodf.shape))
 
+    ##  Voronoi quick implementation
+    uml_vor_boundaries_geodf = load_vor_boundaries_data()
+    logger.info("UML Voronoi boundaries data shape: %s" % str(uml_vor_boundaries_geodf.shape))
     ##
     # Input: boundaries.geojson, output: loss.csv
     # This code reads in the boundaries file, then computes yearly tree cover
@@ -320,3 +331,5 @@ if __name__ == '__main__':
     # This code produces pairs of brandid and umlid for matching brands and mills
     t.write_brand_mill_matches()
     logger.info("Brand_mills data shape: %s" % str(t.brands[['brandid', 'umlid']].shape))
+
+
