@@ -24,7 +24,6 @@ class DAL:
         self._brand_mills_full = pd.read_csv("../data/brands.csv")
         self._brand_mills_thin = pd.read_csv("../data/brand_mills.csv")
         self._mills = pd.read_csv("../data/uniquemills.csv")
-        self._tile_urls = pd.read_json("../data/tile_urls.json")
 
         ids = list(self._brand_mills_thin.umlid)
         self._mills_with_brands = self._mills.query("umlid in @ids")
@@ -118,13 +117,6 @@ class DAL:
             "quartile_3": int(brands_per_mill_df["75%"]),
             "std": brands_per_mill_df["std"]
         }
-
-
-    def get_map_tile_urls(self):
-        '''
-        Parses a JSON file from the batch layer
-        '''
-        return self._tile_urls.to_dict(orient="records")
 
 
     def get_mill(self, uml_id):
