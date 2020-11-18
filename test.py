@@ -19,5 +19,19 @@ class TestStringMethods(unittest.TestCase):
         with self.assertRaises(TypeError):
             s.split(2)
 
+class TestBrandInfo(unittest.TestCase):
+    # Mean risk current
+    def test_mean_risk_current(self):
+        data_test = 
+        val_test = requests. # Grab risk score current mean from webserver json
+        val_true = # Grab mean risk score current from uniquebrands.csv
+        self.assertEqual(val_test, val_true)
+    
+    # Mill count
+    def test_mill_count(self):
+        pass
+    
+    # (Maybe) 404 error 
+
 if __name__ == '__main__':
     unittest.main()
