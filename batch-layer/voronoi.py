@@ -12,7 +12,7 @@ import pandas as pd
 from scipy.spatial import Voronoi
 from shapely.geometry import Point, Polygon
 
-BUFFER_SIZE = 10000
+BUFFER_SIZE = 50000
 BUFFER_RES = 4
 
 class Vor():
@@ -30,7 +30,7 @@ class Vor():
             self.uml = pd.DataFrame.from_dict(data, orient='index',
                 columns=['umlid','latitude', 'longitude'])
 
-        self.latlon_gdf = gpd.GeoDataFrame(self.uml, 
+        self.latlon_gdf = gpd.GeoDataFrame(self.uml,
             geometry=gpd.points_from_xy(self.uml.longitude, self.uml.latitude),
             crs={'init' :'epsg:4326'})
         self.xy_gdf = self.latlon_gdf.to_crs("EPSG:3395")
@@ -128,5 +128,3 @@ class Vor():
 
         gdf = gdf.to_crs("EPSG:4326")
         return gdf
-
-

@@ -33,7 +33,7 @@ OUTPUT_UML_FNAME = 'umls.json'
 OUTPUT_BRAND_FNAME = 'brands.csv'
 INPUT_BRAND_MATCH_FNAME = 'complete_match_update.tsv'
 INPUT_BRAND_INFO_FNAME = 'brand_info.csv'
-OUTPUT_UML_BOUNDARIES_FNAME = 'uml_boundaries.geojson'
+OUTPUT_UML_BUF_BOUNDARIES_FNAME = 'uml_boundaries_buf.geojson'
 OUTPUT_UML_VOR_BOUNDARIES_FNAME = 'uml_boundaries.geojson'
 OUTPUT_BIGTABLE_FNAME = 'bigtable.csv'
 MILL_AREAS_RES = 12
@@ -75,7 +75,7 @@ def load_brand_data():
 """
 def load_uml_boundaries_data():
     input_file_path = os.path.join(OUTPUT_DIR, OUTPUT_UML_FNAME)
-    output_file_path = os.path.join(OUTPUT_DIR, OUTPUT_UML_BOUNDARIES_FNAME)
+    output_file_path = os.path.join(OUTPUT_DIR, OUTPUT_UML_BUF_BOUNDARIES_FNAME)
     return build_uml_boundaries_data(output_file_path,
                                      input_file_path,
                                      MILL_RADIUS_IN_M,
@@ -90,7 +90,7 @@ def load_vor_boundaries_data():
 """Builds loss data for each year 2001-2019
 """
 def load_uml_loss_data():
-    input_file_path = os.path.join(OUTPUT_DIR, OUTPUT_UML_BOUNDARIES_FNAME)
+    input_file_path = os.path.join(OUTPUT_DIR, OUTPUT_UML_VOR_BOUNDARIES_FNAME)
     output_file_path = os.path.join(OUTPUT_DIR, OUTPUT_UML_LOSS_FNAME)
     return build_loss_data(input_file_path,
                                output_file_path,
@@ -116,7 +116,7 @@ class Bigtable():
         self.out_bigtable = os.path.join(OUTPUT_DIR, OUTPUT_BIGTABLE_FNAME)
         self.brands = dfs.get('brands', load_brand_data())
         self.uml =  dfs.get('uml', load_uml_data())
-        self.uml_geo = dfs.get('uml_geo', load_uml_boundaries_data())
+        self.uml_geo = dfs.get('uml_geo', load_vor_boundaries_data())
         self.uml_loss = dfs.get('uml_loss', load_uml_loss_data())
         self.uml_risk = dfs.get('uml_risk', load_uml_risk_data())
         self.out_uml = os.path.join(OUTPUT_DIR, OUTPUT_UNIQUE_MILLS_FNAME)
@@ -139,8 +139,9 @@ class Bigtable():
     def build_unique_mills(self):
         df1 = self.uml.drop(columns=['objectid']).merge(
                                 self.uml_risk, on='umlid', how='left')
-        df2 = self.uml_loss.merge(self.uml_geo.drop(
-                    columns=['latitude', 'longitude']), on='umlid', how='left')
+        if 'boundary_shape' in self.uml_geo.columns:
+            self.uml_geo.rename(columns={'boundary_shape':'geometry'}, inplace=True)
+        df2 = self.uml_loss.merge(self.uml_geo, on='umlid', how='left')
         self.unique_mills = df1.merge(df2, on='umlid', how='left')
 
 
@@ -284,8 +285,15 @@ if __name__ == '__main__':
 
     ##  Voronoi quick implementation
     uml_vor_boundaries_geodf = load_vor_boundaries_data()
+    uml_vor_boundaries_geodf.drop(columns=['region_assigned'], inplace=True)
     logger.info("UML Voronoi boundaries data shape: %s" % str(uml_vor_boundaries_geodf.shape))
     ##
+
+
+    # Write out voronoi boundaries to geojson file.
+    vor_geodf_output_path = os.path.join(OUTPUT_DIR, OUTPUT_UML_VOR_BOUNDARIES_FNAME)
+    uml_vor_boundaries_geodf.to_file(vor_geodf_output_path, driver='GeoJSON')
+
     # Input: boundaries.geojson, output: loss.csv
     # This code reads in the boundaries file, then computes yearly tree cover
     # loss with EE. The result shows uml_id with loss for each year in columns
@@ -306,7 +314,7 @@ if __name__ == '__main__':
         'out': os.path.join(OUTPUT_DIR, OUTPUT_BIGTABLE_FNAME),
         'brands': brand_df,
         'uml':  uml_df,
-        'uml_geo': uml_boundaries_geodf,
+        'uml_geo': uml_vor_boundaries_geodf,
         'uml_loss': uml_loss_by_year_df,
         'uml_risk': uml_risk_df}
 
@@ -331,5 +339,3 @@ if __name__ == '__main__':
     # This code produces pairs of brandid and umlid for matching brands and mills
     t.write_brand_mill_matches()
     logger.info("Brand_mills data shape: %s" % str(t.brands[['brandid', 'umlid']].shape))
-
-
