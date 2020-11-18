@@ -11,6 +11,7 @@ import json
 import pandas as pd
 import geopandas as gpd
 import ee
+import numpy as np
 
 from log_util import logger
 from storage_util import (write_json, write_df, write_geojson)
@@ -229,7 +230,7 @@ def build_loss_data(input_file_path,
         # Compute land area within each geometric boundary and add a column to data
         # frame.  Compute histogram of datamask layer per mill area.
         logger.info("Computing areas of land and forest.")
-        datamask_bins = (1, 2, 1)
+        datamask_bins = (1, 2, 1)   # 1 bin of [1,2)
         landTypedict = reduce_hist(gfc_img, 'datamask', geoms, datamask_bins)
         logger.info("Land finished.")
         # Extract land area for each mill and add to dataframe.
@@ -241,7 +242,8 @@ def build_loss_data(input_file_path,
 
         # Compute forested area for each area and add a column to dataframe.
         # Compute the area where treecover2000 is greater than or equal to 30%.
-        treecoverdict = reduce_hist(gfc_img, 'treecover2000', geoms, (30, 101, 1))
+        treecover_bins = (30, 101, 1)   # 1 bin of [30,101)
+        treecoverdict = reduce_hist(gfc_img, 'treecover2000', geoms, treecover_bins)
 
         # Extract the area for each area boundary and add to dataframe.
         treecover2000_area = []
@@ -255,7 +257,8 @@ def build_loss_data(input_file_path,
         logger.info("Computing yearly tree cover loss.")
         lossyears = list(range(1, 20))
 
-        lossyeardict = reduce_hist(gfc_img, 'lossyear', geoms, (1, 20, 19))
+        lossyear_bins = (1, 20, 19)     # 19 bins of 1 each from 1-19
+        lossyeardict = reduce_hist(gfc_img, 'lossyear', geoms, lossyear_bins)
 
         for i, year in enumerate(lossyears):
             col_name = "treeloss_20" + str(year).zfill(2)
@@ -326,7 +329,7 @@ def build_risk_data(input_file_path, output_file_path, id_col, years = [2018, 20
         logger.info("Started reading loss data from csv.")
         loss_df = pd.read_csv(input_file_path)
 
-        # Create a new column that is the z-score for the tree loss proportion.
+        # Create a new column that is the z-score for the sqrt tree loss proportion.
         loss_df['past_risk_z'] = get_z(loss_df, 'treeloss_sum_proportion_of_forest')
 
         # Create a new column that is the risk (1-5) associated with z-score
@@ -343,13 +346,13 @@ def build_risk_data(input_file_path, output_file_path, id_col, years = [2018, 20
         loss_df[mean_col] = loss_df.loc[:, col_list].mean(axis=1)
 
         # Create a new colum that is the mean treeloss as a proportion of forest.
-        mean_prop_col = mean_col + '_proportion'
-        loss_df[mean_prop_col] = loss_df[mean_col]/loss_df['forest_area']
+        mean_prop_sqrt_col = mean_col + '_proportion_sqrt'
+        loss_df[mean_prop_sqrt_col] = np.sqrt(loss_df[mean_col]/loss_df['forest_area'])
 
         # Create a new column that is the z-score for the mean treeloss as a
         # proportion of forest.
-        current_z_col = mean_prop_col + "_z"
-        loss_df[current_z_col] = get_z(loss_df, mean_prop_col)
+        current_z_col = mean_prop_sqrt_col + "_z"
+        loss_df[current_z_col] = get_z(loss_df, mean_prop_sqrt_col)
 
         # Convert z-score to risk (1-5)
         loss_df['risk_score_current'] = get_risk_from_z(loss_df, current_z_col)
@@ -372,7 +375,7 @@ def build_risk_data(input_file_path, output_file_path, id_col, years = [2018, 20
                                   'risk_score_current',
                                   'risk_score_past',
                                   'risk_score_future']]
-        
+
         # Write out risk_df to CSV
         write_df(risk_df, output_file_path, index = False)
 
