@@ -23,7 +23,7 @@ class DAL:
         self._brands = pd.read_csv("../data/uniquebrands.csv")
         self._brand_mills_full = pd.read_csv("../data/brands.csv")
         self._brand_mills_thin = pd.read_csv("../data/brand_mills.csv")
-        self._mills = pd.read_csv("../data/uniquemills.csv")
+        self._mills = pd.read_csv("../data/uniquemills.csv").query("geometry == geometry")
 
         ids = list(self._brand_mills_thin.umlid)
         self._mills_with_brands = self._mills.query("umlid in @ids")
@@ -61,8 +61,23 @@ class DAL:
         else:
             chosen_brands = self._brands
 
+
+        risk_scores = (self._mills_with_brands[["umlid", "risk_score_current"]]
+                        .set_index("umlid"))
+
+        avg_risk_scores = (self._brand_mills_thin[["brandid", "umlid"]]
+                                .join(risk_scores, on="umlid")
+                                .groupby("brandid")
+                                .mean()
+                                .risk_score_current
+                                .round(3)
+                                .to_frame()
+                                .rename(columns={"risk_score_current": "avg_risk_score_current"}))
+
+
         return (chosen_brands[BRANDSHORT_ATTRS]
-                .sort_values("risk_score_current", ascending=False)
+                .join(avg_risk_scores, on="brandid")
+                .sort_values("avg_risk_score_current", ascending=False)
                 .to_dict(orient="records"))
 
 

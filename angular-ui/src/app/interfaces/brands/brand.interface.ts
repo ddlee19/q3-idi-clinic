@@ -18,13 +18,16 @@ export interface Brand {
     /** The number of non-RSPO certified mills affiliated with the brand. */
     nonrspo_mill_count: number;
 
-    /** The brand's current risk score. */
+    /** The average current risk score of the brand's mills. */
+    avg_risk_score_current: number;
+
+    /** The brand's current risk score based on dissolved polygon geometries. */
     risk_score_current: number;
 
-    /** The brand's future risk score. */
+    /** The brand's future risk score based on dissolved polygon geometries. */
     risk_score_future: number;
 
-    /** The brand's past risk score. */
+    /** The brand's past risk score based on dissolved polygon geometries. */
     risk_score_past: number;
 
     /** The number of RSPO-certified mills affiliated with the brand. */
