@@ -32,7 +32,7 @@ export interface DetailedBrand extends Brand {
     description: string;
 
     /** A link to the brand's website. */
-    externalLink: string;
+    external_link: string;
 
     /** The list of mills associated with the brand. */
     mills: MillProperties[];

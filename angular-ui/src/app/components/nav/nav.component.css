@@ -3,8 +3,8 @@
   box-shadow: 8px 8px 18px #37393a;
 }
 #navbar {
-    z-index: 1000;
     box-shadow: 8px 8px 18px #37393a;
+    width: 10% !important;
 }
 #navlinks div {
   margin-bottom: 30%;

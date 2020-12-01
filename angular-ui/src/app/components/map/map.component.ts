@@ -32,6 +32,9 @@ export class MapComponent implements AfterViewInit  {
   /** A private reference to the list of mill features */
   private millFeatures: Mill[];
 
+  /** A private reference to trigger the map display. */
+  showMap: boolean = true;
+
   /**
   * Initializes a Leaflet.js map and its layers.
   */
@@ -201,7 +204,12 @@ export class MapComponent implements AfterViewInit  {
         let resourceId = urlSegments.length == 2 ? +urlSegments[1].path : null;
 
         if(resourceType == "brands-summary"){
+          this.showMap = true;
           this.filterMills(resourceId);
+        }
+
+        if(resourceType == "brands-report"){
+          this.showMap = false;
         }
       })
   }

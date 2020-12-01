@@ -1,8 +1,12 @@
+#brand-report-container {
+    width: 100%;
+}
+
 #brand-report {
-    z-index: 100001;
-    padding: 1%;
-    justify-content: center;
-    align-items: center;
+    padding: 1% 15% 5% 5%;
+    margin-left: 10%;
+    /* justify-content: center; */
+    /* align-items: center; */
 }
 
 .statistics {

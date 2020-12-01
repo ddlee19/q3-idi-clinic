@@ -28,7 +28,6 @@ export class BrandReportComponent implements OnInit {
     })
   }
 
-
  /**
  * Closes the report view for the selected brand by navigating back to
  * the selected brand summary card.
@@ -37,14 +36,14 @@ export class BrandReportComponent implements OnInit {
     this.router.navigate([`/brands-summary/${this.brand.brandid}`]);
   }
   
-  /** Constructs a new instance of an individual brand summary card*/
+  /** Constructs a new instance of an individual brand summary card */
   constructor(
     private apiService: ApiService,
     private route: ActivatedRoute,
     private router: Router) {}
 
 
-  ngOnInit(): void { 
+  ngOnInit(): void {
     this.getBrand();
   }
 }
