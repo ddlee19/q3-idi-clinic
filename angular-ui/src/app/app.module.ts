@@ -11,6 +11,7 @@ import { BrandAggTreeLossChartComponent } from './components/brand-agg-tree-loss
 import { BrandFilterComponent } from './components/brand-filter/brand-filter.component';
 import { BrandComponent } from './components/brand/brand.component';
 import { AboutComponent } from './components/about/about.component';
+import { BrandReportComponent } from './components/brand-report/brand-report.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { AboutComponent } from './components/about/about.component';
     BrandAggTreeLossChartComponent,
     BrandFilterComponent,
     BrandComponent,
-    AboutComponent
+    AboutComponent,
+    BrandReportComponent
   ],
   imports: [
     BrowserModule,
