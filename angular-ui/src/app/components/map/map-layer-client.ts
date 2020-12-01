@@ -6,31 +6,28 @@ import * as L from 'leaflet';
 export class MapLayerClient {
 
     map: L.Map;
-    light_base_layer: L.TileLayer;
-    dark_base_layer: L.TileLayer;
-    all_mills_layer: L.LayerGroup;
-    all_mills_radii_layer: L.GeoJSON;
-    filtered_mills_layer: L.LayerGroup;
-    filtered_mills_radii_layer: L.LayerGroup;
+    baseLayer: L.TileLayer;
+    allMillsLayer: L.LayerGroup;
+    allMillsBoundariesLayer: L.GeoJSON;
+    filteredMillsLayer: L.LayerGroup;
+    filteredMillsBoundariesLayer: L.LayerGroup;
 
     constructor(
         map: L.Map,
-        light_base_layer: L.TileLayer,
-        dark_base_layer: L.TileLayer,
-        all_mills_layer: L.LayerGroup,
-        all_mills_radii_layer: L.GeoJSON)
+        baseLayer: L.TileLayer,
+        allMillsLayer: L.LayerGroup,
+        allMillsBoundariesLayer: L.GeoJSON)
     {
         this.map = map;
-        this.all_mills_layer = all_mills_layer;
-        this.all_mills_radii_layer = all_mills_radii_layer;
-        this.light_base_layer = light_base_layer;
-        this.dark_base_layer = dark_base_layer;
+        this.baseLayer = baseLayer;
+        this.allMillsLayer = allMillsLayer;
+        this.allMillsBoundariesLayer = allMillsBoundariesLayer;
         this.initializeOverlayLayers();
     }
 
     private initializeOverlayLayers(){
-        this.map.addLayer(this.all_mills_radii_layer);
-        this.map.addLayer(this.all_mills_layer);
+        this.map.addLayer(this.allMillsBoundariesLayer);
+        this.map.addLayer(this.allMillsLayer);
     }
 
     private removeLayerIfActive(layer: L.Layer){
@@ -40,29 +37,29 @@ export class MapLayerClient {
     }
 
     private clearMillsLayers(){
-        this.removeLayerIfActive(this.all_mills_layer);
-        this.removeLayerIfActive(this.all_mills_radii_layer);
-        this.removeLayerIfActive(this.filtered_mills_layer);
-        this.removeLayerIfActive(this.filtered_mills_radii_layer);
+        this.removeLayerIfActive(this.allMillsLayer);
+        this.removeLayerIfActive(this.allMillsBoundariesLayer);
+        this.removeLayerIfActive(this.filteredMillsLayer);
+        this.removeLayerIfActive(this.filteredMillsBoundariesLayer);
     }
 
     resetMillsLayers(){
         this.clearMillsLayers();
-        this.map.addLayer(this.all_mills_radii_layer);
-        this.map.addLayer(this.all_mills_layer);
+        this.map.addLayer(this.allMillsBoundariesLayer);
+        this.map.addLayer(this.allMillsLayer);
     }
 
     filterMillsLayers(
-        filtered_mills_layer: L.LayerGroup,
-        filtered_mills_radii_layer: L.LayerGroup)
+        filteredMillsLayer: L.LayerGroup,
+        filteredMillsBoundariesLayer: L.LayerGroup)
     {
         this.clearMillsLayers();
 
-        this.filtered_mills_radii_layer = filtered_mills_radii_layer;
-        this.map.addLayer(this.filtered_mills_radii_layer);
+        this.filteredMillsBoundariesLayer = filteredMillsBoundariesLayer;
+        this.map.addLayer(this.filteredMillsBoundariesLayer);
 
-        this.filtered_mills_layer = filtered_mills_layer;
-        this.map.addLayer(this.filtered_mills_layer);
+        this.filteredMillsLayer = filteredMillsLayer;
+        this.map.addLayer(this.filteredMillsLayer);
     }
 }
 

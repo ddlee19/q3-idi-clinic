@@ -1,8 +1,11 @@
-import { AfterViewInit, Component, Input, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, Input } from '@angular/core';
 import { ApiService } from '../../services/api.service'
 import { MapLayerClient } from './map-layer-client';
 import { Mill } from '../../interfaces/mill.interface';
+import { NavigationEnd, PRIMARY_OUTLET, Router } from '@angular/router';
+import { filter, startWith } from 'rxjs/operators';
 import * as L from 'leaflet';
+
 
 @Component({
   selector: 'app-map',
@@ -10,56 +13,59 @@ import * as L from 'leaflet';
   styleUrls: ['./map.component.css']
 })
 export class MapComponent implements AfterViewInit  {
+
+  // Map configuration constants
   readonly attribution = 'Tiles &copy; Esri & <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  readonly lightMapUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+  readonly baseMapUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
   readonly labelsUrl = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-hybrid/{z}/{x}/{y}{r}.png';
-  readonly darkMapUrl = 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png';
   readonly indonesiaLat = -0.7893;
   readonly indonesiaLong = 113.9213;
   readonly initialZoomLevel = 6;
-  readonly maxZoom = 20;
+  readonly maxZoom = 17;
  
-  @Input() selectedBrand: number;
+  /** A private reference to the Leaflet map instance */
   private map: L.Map;
-  private mapLayerClient: MapLayerClient;
-  private millFeatures: Mill[];
 
+  /** A private reference to the MapComponent's MapLayerClient */
+  private mapLayerClient: MapLayerClient;
+
+  /** A private reference to the list of mill features */
+  private millFeatures: Mill[];
 
   /**
   * Initializes a Leaflet.js map and its layers.
   */
   private async initMap(): Promise<void> {
 
-    // Create light and dark base tile layers
-    let lightBaseLayer = L.tileLayer(this.lightMapUrl, { maxZoom: 17, attribution: this.attribution });
-    let darkBaseLayer = L.tileLayer(this.darkMapUrl, { attribution: this.attribution });
+    // Create base tile layer
+    let baseLayer = L.tileLayer(this.baseMapUrl, { maxZoom: this.maxZoom, attribution: this.attribution });
 
-    // Instantiate map with light base layer
+    // Instantiate map with initial base tile layer, zoom level, and center coordinates
     this.map = L.map("map-id", {
       center: new L.LatLng(this.indonesiaLat, this.indonesiaLong),
       zoom: this.initialZoomLevel,
-      layers: [lightBaseLayer]
+      layers: [baseLayer]
     });
 
-    // Create mill marker and mill polygon layers
+    // Create mill marker and mill boundary layers from GeoJSON
     let millFeatureCollection = await this.apiService.getMills();
     this.millFeatures = millFeatureCollection.features;
-    let [allMillsLayer, allMillsRadiiLayer] = this.createMillLayers(this.millFeatures);
+    let [allMillsLayer, allMillsBoundariesLayer] = this.createMillLayers(this.millFeatures);
 
     // Instantiate map layer client with default set of layers
     this.mapLayerClient = new MapLayerClient(
       this.map,
-      lightBaseLayer,
-      darkBaseLayer,
+      baseLayer,
       allMillsLayer,
-      allMillsRadiiLayer);
+      allMillsBoundariesLayer);
   }
 
   /**
-   * Creates two layers for palm oil mills: (1) a LayerGroup of mill markers
-   * and (2) a GeoJSON layer holding the circular areas around each mill.
+   * Creates two layers to represent palm oil mills: (1) a LayerGroup of mill
+   * markers and (2) a GeoJSON layer consisting of the Voronoi boundaries
+   * around each mill.
    * 
-   * @param millFeatures: a list of mill features 
+   * @param millFeatures: a list of mill GeoJSON features 
    */
   private createMillLayers(millFeatures: Mill[]): [L.LayerGroup, L.GeoJSON] {
     let markers = [];
@@ -92,9 +98,10 @@ export class MapComponent implements AfterViewInit  {
       return [L.layerGroup(markers), radiiLayer];
   }
 
-
   /**
-  * Returns a style object for a mill based on its future risk score.
+  * Returns a style object for a mill based on its current risk score.
+  * 
+  * @param millFeature: a single mill GeoJSON feature
   */
   private getMillStyleObject(millFeature: any): object{
     let score = millFeature.properties.risk_score_current;
@@ -118,6 +125,8 @@ export class MapComponent implements AfterViewInit  {
 
   /**
   * Builds a custom HTML/CSS-only icon for a mill marker.
+  * 
+  * @param millFeature: a single mill GeoJSON feature
   */
   private styleMillMarker(millFeature: Mill): L.DivIcon{
     let style = this.getMillStyleObject(millFeature);
@@ -144,6 +153,8 @@ export class MapComponent implements AfterViewInit  {
 
   /**
   * Filters mill markers displayed on the map by brand.
+  * 
+  * @param brandId: the consumer brand id
   */
   private filterMills(brandId: number): void{
 
@@ -172,23 +183,44 @@ export class MapComponent implements AfterViewInit  {
   }
 
   /**
-   * The class constructor
-   * @param apiService An injected instance of the ApiService
+   * Parses a URL following the end of a navigation event and then filters the
+   * mills on the map according to the resources specified by that URL.
+   * 
+   * For example, "/brands-summary/4" gets parsed into two URL segments: the
+   * resource type "brands-summary" and the resource id "4." Then the mills
+   * on the map are filtered to display only those belonging to the brand
+   * with id "4."
    */
-  constructor(private apiService: ApiService) {}
+  private parseUrlAfterNavigation(){
+    this.router.events
+      .pipe(filter(e => e instanceof NavigationEnd), startWith(this.router))
+      .subscribe((e: NavigationEnd) => {
+        let tree = this.router.parseUrl(e.url);
+        let urlSegments = tree.root.children[PRIMARY_OUTLET].segments;
+        let resourceType = urlSegments[0].path;
+        let resourceId = urlSegments.length == 2 ? +urlSegments[1].path : null;
 
-  /** Initializes Leaflet map with layers after DOM loads */ 
-  ngAfterViewInit(): void {
-    this.initMap();
+        if(resourceType == "brands-summary"){
+          this.filterMills(resourceId);
+        }
+      })
   }
 
   /**
-   * Tracks class property changes in order to perform updates
-   * @param changes 
+   * The class constructor
+   * @param apiService: An injected instance of the ApiService
+   * @param router: An injected instance of the Angular router class
    */
-  ngOnChanges(changes: SimpleChanges) {
-    if(this.map !== null && this.mapLayerClient !== null){
-      this.filterMills(changes.selectedBrand.currentValue);
-    }
+  constructor(
+    private apiService: ApiService,
+    private router: Router) {}
+    
+  /** 
+   * Initializes Leaflet map with layers after the DOM loads and then
+   * subscribes to URL navigation events.
+   */ 
+  async ngAfterViewInit(): Promise<void> {
+    await this.initMap();
+    this.parseUrlAfterNavigation();
   }
 }

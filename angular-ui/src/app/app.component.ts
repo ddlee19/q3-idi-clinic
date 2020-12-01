@@ -7,17 +7,8 @@ declare var $: any
 })
 export class AppComponent {
   title = 'IDI Palm Oil Tracker';
-  selectedBrand: number;
   showBrands: boolean = false;
   showNav: boolean = true;
-
-  brandSelected(brandId: number){
-    this.selectedBrand = brandId;
-  }
-
-  closeBrand(){
-    this.selectedBrand = null;
-  }
 
   openFilter(value: string){
     if(value == 'brands'){

@@ -6,6 +6,7 @@ import { BrandAggregateStats } from '../interfaces/brands/brand-agg-stats.interf
 import { Brand } from '../interfaces/brands/brand.interface';
 import { DetailedBrand } from '../interfaces/brands/brand-detailed.interface';
 import { environment } from 'src/environments/environment';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -19,8 +20,8 @@ export class ApiService {
   }
 
   /** GET a consumer brand from the server by id */
-  getBrand(brandName: string): Promise<DetailedBrand> {
-    return this.http.get<DetailedBrand>(this.apiBase + "brands/" + brandName).toPromise();
+  getBrand(brandName: string): Observable<DetailedBrand> {
+    return this.http.get<DetailedBrand>(this.apiBase + "brands/" + brandName);
   }
 
   /** GET a list of consumer brands from the server */

@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { AboutComponent } from '../about/about.component';
 declare var $: any 
 
 @Component({
@@ -10,7 +9,6 @@ declare var $: any
 export class NavComponent implements OnInit {
 
   @Input() showNav: boolean = true;
-
   @Output() openFilterEvent = new EventEmitter<string>();
 
   openFilter(value: string) {
@@ -18,9 +16,9 @@ export class NavComponent implements OnInit {
   }
 
   launchModal() {
-    // Sample code from 'https://semantic-ui.com/modules/modal.html#/definition'
     $('.ui.modal').modal('show');
   }
+  
   constructor() { }
 
   ngOnInit(): void {

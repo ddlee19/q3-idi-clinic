@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service'
 import { DetailedBrand } from '../../interfaces/brands/brand-detailed.interface';
-
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-brand',
@@ -10,32 +11,40 @@ import { DetailedBrand } from '../../interfaces/brands/brand-detailed.interface'
 })
 export class BrandComponent implements OnInit {
 
-  @Input() selectedBrand: number = null;
-  @Output() closeBrandEvent = new EventEmitter();
   brand: DetailedBrand;
 
   /**
-  * Gets a consumer brand from the server by id.
+  * Parses a consumer brand id from the URL and then retrieves the
+  * corresponding brand from the API server to display in the UI.
   */
-  private async getBrand(brandName: string): Promise<void> {
-    if(brandName != null){
-      this.brand = await this.apiService.getBrand(brandName);
-    }
+ private async getBrand(): Promise<void> {
+  this.route.paramMap.pipe(
+    switchMap((params: ParamMap) => {
+      let id = params.get("brand-id");
+      return this.apiService.getBrand(id);
+    }))
+    .subscribe(brand => {
+      this.brand = brand;
+    })
   }
+
 
  /**
- * Emits an event broadcasting that the user has closed the current brand.
+ * Closes the summary card for the selected brand by navigating back to
+ * the main brands summary card.
  */
  closeBrand(): void {
-    this.closeBrandEvent.emit();
+    this.router.navigate(['/brands-summary']);
   }
+  
 
-  constructor(private apiService: ApiService) { }
+  /** Constructs a new instance of an individual brand summary card*/
+  constructor(
+    private apiService: ApiService,
+    private route: ActivatedRoute,
+    private router: Router) {}
 
-  ngOnInit(): void {
-  }
-
-  ngOnChanges(changes: SimpleChanges) {      
-    this.getBrand(changes.selectedBrand.currentValue);
+  ngOnInit(): void { 
+    this.getBrand();
   }
 }

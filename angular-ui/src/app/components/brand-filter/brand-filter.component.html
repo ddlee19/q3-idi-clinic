@@ -14,7 +14,7 @@
         </div>
         <br/>
         <div id="brand-list" class="ui inverted relaxed divided list">
-            <div class="item" *ngFor="let filter of filters;" (click)="openConsumerBrand(filter.brandid)">
+            <div class="item" *ngFor="let filter of filters;" [routerLink]="['/brands-summary', filter.brandid]">
               <i class="marker icon"></i>
               <div class="content">
                 <a class="header">{{filter.brand}}</a>
