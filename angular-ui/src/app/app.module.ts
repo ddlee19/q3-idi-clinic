@@ -12,6 +12,7 @@ import { BrandFilterComponent } from './components/brand-filter/brand-filter.com
 import { BrandComponent } from './components/brand/brand.component';
 import { AboutComponent } from './components/about/about.component';
 import { BrandReportComponent } from './components/brand-report/brand-report.component';
+import { BoxAndWhiskerPlotComponent } from './components/box-and-whisker-plot/box-and-whisker-plot.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { BrandReportComponent } from './components/brand-report/brand-report.com
     BrandFilterComponent,
     BrandComponent,
     AboutComponent,
-    BrandReportComponent
+    BrandReportComponent,
+    BoxAndWhiskerPlotComponent
   ],
   imports: [
     BrowserModule,
