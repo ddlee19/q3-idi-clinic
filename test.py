@@ -4,44 +4,73 @@ import pandas as pd
 
 MILLS_API_URL = "https://opendata.arcgis.com/datasets/5c026d553ff049a585b90c3b1d53d4f5_34.geojson"
 UML_QUERY = {'country': 'Indonesia'}
-# Example From: https://docs.python.org/3/library/unittest.html
+
+# To-Do: Resolve local host IP address dynamically to avoid use of two variables
+BASE_API_URL_MAC = "http://0.0.0.0:5000/api/v1.0"
+BASE_API_URL_WINDOWS = "http://localhost:5000/api/v1.0"
+BASE_API_URL = BASE_API_URL_WINDOWS
+
+# Comments
+# - Can use self.assertTrue(<condition>) in later test cases
+
 
 class TestBrandInfo(unittest.TestCase):
-    # Get brands returns correct number of brands
+
+    @classmethod
+    def setUpClass(cls):
+        '''
+        Reads in the BigTable CSV file into a Pandas DataFrame before
+        the unit tests execute.
+        '''
+        super(TestBrandInfo, cls).setUpClass()
+        cls.bigTable = pd.read_csv('./data/bigtable.csv')
+
+
     def test_get_brands(self):
+        '''
+        Assert that the "Brands" API endpoint returns the correct number
+        of brands.
+        '''
         val_true = 8
-        test_url = 'http://0.0.0.0:5000/api/v1.0/brands'.format(id)
+        test_url = f"{BASE_API_URL}/brands"
         r = requests.get(test_url)
         test_data = r.json()
         val_test = len(test_data)
         self.assertEqual(val_test, val_true)
 
-    # Mean risk current
+
     def test_mean_risk_current(self):
+        '''
+        Assert that the mean risk score of a brand's mills, retrieved from the
+        "Brands" API endpoint, matches the expected value.
+        '''
         id = 5
-        test_url = 'http://0.0.0.0:5000/api/v1.0/brands/{}'.format(id)
+        test_url = f"{BASE_API_URL}/brands/{id}"
         r = requests.get(test_url)
         test_data = r.json()
         val_test = test_data['avg_stats']['risk_score_current']['mean']
-        true_data = pd.read_csv('./data/bigtable.csv')
+        true_data = self.bigTable
         val_true = true_data[true_data['brandid']==id]['risk_score_current'].mean()
         self.assertEqual(val_test, val_true)
 
     # Mill count
     def test_brand_mill_count(self):
+        '''
+        Asserts that the mill count
+        '''
         id = 3
-        test_url = 'http://0.0.0.0:5000/api/v1.0/brands/{}'.format(id)
+        test_url = f"{BASE_API_URL}/brands/{id}"
         r = requests.get(test_url)
         test_data = r.json()
         val_test = test_data['mill_count']
-        true_data = pd.read_csv('./data/bigtable.csv')
+        true_data = self.bigTable
         val_true = true_data[true_data['brandid']==id]['umlid'].count()
         self.assertEqual(val_test, val_true)
 
     # 404 error on get brandid
     def test_brand_404_error(self):
         id = 25
-        test_url = 'http://0.0.0.0:5000/api/v1.0/brands/{}'.format(id)
+        test_url = f"{BASE_API_URL}/brands/{id}"
         r = requests.get(test_url)
         val_test = r.status_code
         val_true = 404
@@ -50,7 +79,7 @@ class TestBrandInfo(unittest.TestCase):
     # Get brands mills
     def test_get_brands_mills(self):
         id = 3
-        test_url = 'http://0.0.0.0:5000/api/v1.0/brands/{}'.format(id)
+        test_url = f"{BASE_API_URL}/brands/{id}"
         r = requests.get(test_url)
         test_data = r.json()
 
@@ -71,7 +100,7 @@ class TestBrandInfo(unittest.TestCase):
     # 404 error on get millid
     def test_mill_404_error(self):
         id = 'po1000001253'
-        test_url = 'http://0.0.0.0:5000/api/v1.0/mills/{}'.format(id)
+        test_url = f"{BASE_API_URL}/mills/{id}"
         r = requests.get(test_url)
         val_test = r.status_code
         val_true = 404
@@ -80,14 +109,14 @@ class TestBrandInfo(unittest.TestCase):
     # Get millid test brands
     def test_get_mills_brands(self):
         id = 'po1000001058'
-        test_url = 'http://0.0.0.0:5000/api/v1.0/mills/{}'.format(id)
+        test_url = f"{BASE_API_URL}/mills/{id}"
         r = requests.get(test_url)
         test_data = r.json()
         val_test = set()
         for brand in test_data['brands']:
             val_test.add(brand['brandid'])
 
-        true_data = pd.read_csv('./data/bigtable.csv')
+        true_data = self.bigTable
         val_true = set(true_data[true_data['umlid']==id]['brandid'])
         self.assertEqual(val_test, val_true)
 
@@ -101,7 +130,7 @@ class TestBrandInfo(unittest.TestCase):
         true_umls = set([x["properties"]["id"].lower() for x in mills])
 
         # Get mills from web server
-        test_url = 'http://0.0.0.0:5000/api/v1.0/mills'
+        test_url = f"{BASE_API_URL}/mills"
         r = requests.get(test_url)
         test_data = r.json()
 
