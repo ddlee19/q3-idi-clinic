@@ -32,6 +32,7 @@ UML_QUERY = {'country': 'Indonesia'}
 OUTPUT_UML_FNAME = 'umls.json'
 OUTPUT_BRAND_FNAME = 'brands.csv'
 INPUT_BRAND_MATCH_FNAME = 'complete_match_update.tsv'
+INPUT_BRAND_MATCH_NEW_FNAME = 'matches_from_matching.csv'
 INPUT_BRAND_INFO_FNAME = 'brand_info.csv'
 OUTPUT_UML_BUF_BOUNDARIES_FNAME = 'uml_boundaries_buf.geojson'
 OUTPUT_UML_VOR_BOUNDARIES_FNAME = 'uml_boundaries.geojson'
@@ -68,8 +69,10 @@ def load_uml_data():
 def load_brand_data():
     input_file_path = os.path.join(INPUT_DIR, INPUT_BRAND_MATCH_FNAME)
     input_brand_info_file_path = os.path.join(INPUT_DIR, INPUT_BRAND_INFO_FNAME)
+    input_new_file_path = os.path.join(INPUT_DIR, INPUT_BRAND_MATCH_NEW_FNAME)
     output_file_path = os.path.join(OUTPUT_DIR, OUTPUT_BRAND_FNAME)
-    return build_brand_data(input_file_path, input_brand_info_file_path, output_file_path)
+    return build_brand_data(input_file_path, input_brand_info_file_path,
+                            input_new_file_path, output_file_path)
 
 """Builds UML boundaries
 """
@@ -171,6 +174,7 @@ class Bigtable():
             geo_bigtable = geo_bigtable[geo_bigtable['geometry'].notnull()]
             keep_cols = ['brandid', 'geometry']
             self.brand_geo = geo_bigtable[keep_cols].dissolve(by='brandid')
+            self.brand_geo = self.brand_geo.simplify(0.1, preserve_topology=False)
             self.write_brand_geo()
 
     def write_brand_geo(self):

@@ -64,7 +64,7 @@ def build_uml_data(output_path, mills_api_url, request_params):
 
 """Fetch brand data from TSV
 """
-def build_brand_data(input_path, input_brand_path, output_path):
+def build_brand_data(input_path, input_brand_path, input_new_matches_path, output_path):
     res = None
     if os.path.exists(output_path):
         res = pd.read_csv(output_path)
@@ -109,8 +109,24 @@ def build_brand_data(input_path, input_brand_path, output_path):
         # Clean up merged dataset
         dfm.reset_index(drop=True, inplace=True)
         dfm.drop_duplicates(subset=['brand_x', 'umlid'], inplace=True)
-        dfm.drop(columns=['brand_y'], inplace=True)
+        dfm.drop(columns=['brand_y', 'idx'], inplace=True)
         dfm.rename(columns={'brand_x': 'brand'}, inplace=True)
+
+        # Bring in new match dataset
+        dfnew = pd.read_csv(input_new_matches_path)
+
+        # Keep wanted columns
+        dfnew = dfnew[['UMLID', 'Consumer Company', 'Mill Name',
+                'Mill Company', 'Parent Company', 'Province',
+                'District', 'RSPO']]
+
+        # Rename columns
+        del mapper['idx']
+        dfnew = dfnew.rename(columns=mapper)
+        dfnew.reset_index(drop=True, inplace=True)
+
+        # Concatenate datasets
+        dfm = pd.concat([dfm, dfnew])
 
         # Rename brands
         brand_mapper = {
@@ -121,7 +137,13 @@ def build_brand_data(input_path, input_brand_path, output_path):
                       'johnson and johnson':'Johnson & Johnson',
                       'general mills':'General Mills, Inc',
                       'hershey':'The Hershey Company',
-                      'loreal':"L'Oreal"}
+                      'loreal':"L'Oreal",
+                      'procter and gamble':'The Procter & Gamble Company',
+                      'colgate palmolive':'Colgate-Palmolive Company',
+                      'nestle':'Nestlé',
+                      'mars':'Mars, Incorporated',
+                      'unilever':'Unilever'}
+
         for old, new in brand_mapper.items():
             dfm['brand'] = dfm['brand'].replace(old,new)
 
@@ -129,7 +151,6 @@ def build_brand_data(input_path, input_brand_path, output_path):
         df3 = pd.read_csv(input_brand_path)
         df3.rename(columns={'name':'brand', 'id':'brandid'}, inplace=True)
         dft = df3.merge(dfm, on='brand', how='right')
-        dft.drop(columns=['idx'], inplace=True)
         res = dft
         write_df(res, output_path, index=False)
 
