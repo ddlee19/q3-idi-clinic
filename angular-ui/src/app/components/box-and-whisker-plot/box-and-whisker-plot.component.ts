@@ -1,6 +1,8 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, Input } from '@angular/core';
 import * as CJS from 'chart.js'
 import "chartjs-chart-box-and-violin-plot/build/Chart.BoxPlot.js";
+import { MillProperties } from 'src/app/interfaces/mill.interface';
+import { BrandAggregateStats } from 'src/app/interfaces/brands/brand-agg-stats.interface'
 
 @Component({
   selector: 'app-box-and-whisker-plot',
@@ -9,62 +11,39 @@ import "chartjs-chart-box-and-violin-plot/build/Chart.BoxPlot.js";
 })
 export class BoxAndWhiskerPlotComponent implements AfterViewInit {
 
-  // EXAMPLE FROM:
-  // https://github.com/datavisyn/chartjs-chart-box-and-violin-plot
-  randomValues(count, min, max) {
-    const delta = max - min;
-    return Array.from({ length: count }).map(() => Math.random() * delta + min);
-  }
+  @Input() label: string;
+  @Input() chartLabels: string[];
+  @Input() boxPlotData: number[][];
+  @Input() plotType: string;
+  @Input() legendLabel: string;
 
-  private initMap(){
 
-    let canvasElement = <HTMLCanvasElement>document.getElementById('box-and-whisker');
+    private initMap(){
+
+    let canvasElement = <HTMLCanvasElement>document.getElementById("box-and-whisker");
     let ctx = canvasElement.getContext('2d');
+    
+    console.log(this.chartLabels)
+    console.log(this.boxPlotData)
 
     let data = {
-      labels: ["January", "February", "March", "April", "May", "June", "July"],
+      labels: this.chartLabels,
       datasets: [
         {
-          label: "Dataset 1",
-          backgroundColor: "rgba(255,0,0,0.5)",
-          borderColor: "red",
+          label: this.legendLabel,
+          backgroundColor: "rgba(210, 77, 87, 1)",
+          borderColor: "rgba(210, 77, 87, 1)",
           borderWidth: 1,
-          outlierColor: "#999999",
-          padding: 10,
+          outlierColor: "red",
+          padding: 5,
           itemRadius: 0,
-          data: [
-            this.randomValues(100, 0, 100),
-            this.randomValues(100, 0, 20),
-            this.randomValues(100, 20, 70),
-            this.randomValues(100, 60, 100),
-            this.randomValues(40, 50, 100),
-            this.randomValues(100, 60, 120),
-            this.randomValues(100, 80, 100)
-          ]
-        },
-        {
-          label: "Dataset 2",
-          backgroundColor: "rgba(0,0,255,0.5)",
-          borderColor: "blue",
-          borderWidth: 1,
-          outlierColor: "#999999",
-          padding: 10,
-          itemRadius: 0,
-          data: [
-            this.randomValues(100, 60, 100),
-            this.randomValues(100, 0, 100),
-            this.randomValues(100, 0, 20),
-            this.randomValues(100, 20, 70),
-            this.randomValues(40, 60, 120),
-            this.randomValues(100, 20, 100),
-            this.randomValues(100, 80, 100)
-          ]
+          data: this.boxPlotData
         }
       ]
     };
   
     let chart = new CJS.Chart(ctx, {
-        type: 'boxplot',
+        type: this.plotType,
         data: data,
         options: {
           responsive: true,

@@ -31,9 +31,18 @@
             </div>
         </div>
     </div>
-    <app-brand-agg-tree-loss-chart [treeCoverStats]="aggBrandStats.dist_of_brand_avgs_for_treecover"></app-brand-agg-tree-loss-chart>
-    <div class="ui small inverted header center aligned">Brand Deforestation Risk</div>
-    <app-box-and-whisker-plot></app-box-and-whisker-plot>
+    <app-brand-agg-tree-loss-chart 
+        [label]="lineChartTitle"
+        [treeCoverStats]="aggBrandStats.dist_of_brand_avgs_for_treecover">
+    </app-brand-agg-tree-loss-chart>
+    <div class="ui small inverted header center aligned"></div>
+    <app-box-and-whisker-plot
+         [label]="boxPlotTitle"
+         [chartLabels]="boxPlotLabels"
+         [boxPlotData]="boxPlotData"
+         [plotType]="plotType"
+         [legendLabel]="legendLabel">
+    </app-box-and-whisker-plot>
     <div class="ui small inverted header center aligned">Brand Ranking</div>
     <div id="best-brands">
         <table class="ui small single line selectable inverted celled table">

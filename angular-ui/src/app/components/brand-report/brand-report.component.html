@@ -35,7 +35,19 @@
                         </div>
                         <div class="ui small inverted header">Deforestation Risk</div>
                         <div class="item">
-                            <p>Charts go here!</p>
+                            <app-brand-agg-tree-loss-chart 
+                                [label]="lineChartTitle"
+                                [treeCoverStats]="brand.avg_stats">
+                            </app-brand-agg-tree-loss-chart>
+                        </div>
+                        <div class="item">
+                            <app-box-and-whisker-plot
+                                [label]="boxPlotTitle"
+                                [chartLabels]="boxPlotLabels"
+                                [boxPlotData]="boxPlotData"
+                                [plotType]="plotType"
+                                [legendLabel]="legendLabel">
+                            </app-box-and-whisker-plot>
                         </div>
                         <div class="ui small inverted header">Supplier Partners</div>
                         <div class="item">
