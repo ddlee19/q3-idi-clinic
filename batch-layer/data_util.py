@@ -124,9 +124,12 @@ def build_brand_data(input_path, input_brand_path, input_new_matches_path, outpu
         del mapper['idx']
         dfnew = dfnew.rename(columns=mapper)
         dfnew.reset_index(drop=True, inplace=True)
+        dfnew.drop_duplicates(subset=['brand', 'umlid'], inplace=True)
+
 
         # Concatenate datasets
         dfm = pd.concat([dfm, dfnew])
+        dfm.drop_duplicates(subset=['brand', 'umlid'], inplace=True)
 
         # Rename brands
         brand_mapper = {
