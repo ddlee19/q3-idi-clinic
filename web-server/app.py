@@ -63,12 +63,6 @@ def get_mill_stats():
     return jsonify(dal.get_mills_aggregate_stats())
 
 
-@app.route("/api/v1.0/tile-urls", methods=['GET'])
-@cross_origin()
-def get_tiles():
-    return jsonify(dal.get_map_tile_urls())
-
-
 @app.errorhandler(404)
 @cross_origin()
 def not_found(error):
