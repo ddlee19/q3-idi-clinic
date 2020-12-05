@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { TileUrl } from '../interfaces/tile-urls.interface';
 import { MillFeatureCollection } from '../interfaces/mill.interface';
 import { BrandAggregateStats } from '../interfaces/brands/brand-agg-stats.interface';
 import { Brand } from '../interfaces/brands/brand.interface';
@@ -32,11 +31,6 @@ export class ApiService {
   /** GET mill data from the server */
   getMills(): Promise<MillFeatureCollection> {
       return this.http.get<MillFeatureCollection>(this.apiBase + "mills").toPromise();
-  }
-
-  /** GET tile urls from the server */
-  getTileUrls(): Promise<TileUrl[]> {
-    return this.http.get<TileUrl[]>(this.apiBase + "tile-urls").toPromise();
   }
 
   constructor(private http: HttpClient) { }

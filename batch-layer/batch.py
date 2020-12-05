@@ -32,6 +32,7 @@ UML_QUERY = {'country': 'Indonesia'}
 OUTPUT_UML_FNAME = 'umls.json'
 OUTPUT_BRAND_FNAME = 'brands.csv'
 INPUT_BRAND_MATCH_FNAME = 'complete_match_update.tsv'
+INPUT_BRAND_MATCH_NEW_FNAME = 'matches_from_matching.csv'
 INPUT_BRAND_INFO_FNAME = 'brand_info.csv'
 OUTPUT_UML_BUF_BOUNDARIES_FNAME = 'uml_boundaries_buf.geojson'
 OUTPUT_UML_VOR_BOUNDARIES_FNAME = 'uml_boundaries.geojson'
@@ -49,6 +50,7 @@ OUTPUT_BRAND_RISK_FNAME = 'brand_risk.csv'
 OUTPUT_UNIQUE_MILLS_FNAME = 'uniquemills.csv'
 OUTPUT_UNIQUE_BRANDS_FNAME = 'uniquebrands.csv'
 OUTPUT_MATCHES_FNAME = 'brand_mills.csv'
+TOL = 0.08   # Tolerance for geopandas.series.simplify()
 
 
 # Authenticate with the service account and initialize Earth Engine
@@ -68,8 +70,10 @@ def load_uml_data():
 def load_brand_data():
     input_file_path = os.path.join(INPUT_DIR, INPUT_BRAND_MATCH_FNAME)
     input_brand_info_file_path = os.path.join(INPUT_DIR, INPUT_BRAND_INFO_FNAME)
+    input_new_file_path = os.path.join(INPUT_DIR, INPUT_BRAND_MATCH_NEW_FNAME)
     output_file_path = os.path.join(OUTPUT_DIR, OUTPUT_BRAND_FNAME)
-    return build_brand_data(input_file_path, input_brand_info_file_path, output_file_path)
+    return build_brand_data(input_file_path, input_brand_info_file_path,
+                            input_new_file_path, output_file_path)
 
 """Builds UML boundaries
 """
@@ -146,7 +150,7 @@ class Bigtable():
 
 
     def write_uniquemills(self):
-        self.unique_mills.to_csv(self.out_uml)
+        self.unique_mills.to_csv(self.out_uml, index=False)
 
     def build_big_table(self):
         df0 = self.brands.merge(self.uml[['umlid', 'cert']], on='umlid', how='left')
@@ -155,7 +159,7 @@ class Bigtable():
         self.bigtable = df2.merge(self.uml_geo, on='umlid', how='left')
 
     def write_bigtable(self):
-        self.bigtable.to_csv(self.out_bigtable)
+        self.bigtable.to_csv(self.out_bigtable, index=False)
 
     def generate_aggregations(self):
         self.aggregate_geom_by_brand()
@@ -171,6 +175,7 @@ class Bigtable():
             geo_bigtable = geo_bigtable[geo_bigtable['geometry'].notnull()]
             keep_cols = ['brandid', 'geometry']
             self.brand_geo = geo_bigtable[keep_cols].dissolve(by='brandid')
+            self.brand_geo = self.brand_geo.simplify(TOL, preserve_topology=False)
             self.write_brand_geo()
 
     def write_brand_geo(self):
@@ -256,10 +261,10 @@ class Bigtable():
 
 
     def write_uniquebrands(self):
-        self.brand_df.to_csv(self.out_brands)
+        self.brand_df.to_csv(self.out_brands, index=False)
 
     def write_brand_mill_matches(self):
-        self.brands[['brandid', 'umlid']].to_csv(self.out_matches)
+        self.brands[['brandid', 'umlid']].to_csv(self.out_matches, index=False)
 
 
 if __name__ == '__main__':
