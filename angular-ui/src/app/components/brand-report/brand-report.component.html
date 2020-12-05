@@ -20,36 +20,36 @@
                 <div class="row">
                     <div class="four wide column" style="justify-content: left;">
                         <div class="ui inverted secondary vertical pointing menu">
-                            <a class="ui inverted item active">Background</a>
-                            <a class="ui inverted item">Deforestation Risk</a>
-                            <a class="ui inverted item">Supplier Partners</a>
-                            <a class="ui inverted item">Mills</a>
+                            <a (click)="navigateToSection('background-section')" class="ui inverted item active">Background</a>
+                            <a (click)="navigateToSection('deforestation-risk-section')" class="ui inverted item">Deforestation Risk</a>
+                            <a (click)="navigateToSection('suppliers-section')" class="ui inverted item">Supplier Partners</a>
+                            <a (click)="navigateToSection('mills-section')" class="ui inverted item">Mills</a>
                         </div> 
                     </div>
                     <div class="twelve wide column">
-                        <div class="ui small inverted header">Background</div>
+                        <div id="background-section" class="ui small inverted header">Background</div>
                         <div class="item">
                             <p>
                                 {{brand.description}}
                             </p>
                         </div>
-                        <div class="ui small inverted header">Deforestation Risk</div>
+                        <div id="deforestation-risk-section" class="ui small inverted header">Deforestation Risk</div>
                         <div class="item">
                             <app-brand-agg-tree-loss-chart 
-                                [label]="lineChartTitle"
+                                [chartTitle]="lineChartTitle"
                                 [treeCoverStats]="brand.avg_stats">
                             </app-brand-agg-tree-loss-chart>
                         </div>
                         <div class="item">
                             <app-box-and-whisker-plot
-                                [label]="boxPlotTitle"
+                                [chartTitle]="boxPlotTitle"
                                 [chartLabels]="boxPlotLabels"
                                 [boxPlotData]="boxPlotData"
                                 [plotType]="plotType"
                                 [legendLabel]="legendLabel">
                             </app-box-and-whisker-plot>
                         </div>
-                        <div class="ui small inverted header">Supplier Partners</div>
+                        <div id="suppliers-section" class="ui small inverted header">Supplier Partners</div>
                         <div class="item">
                             <div id="suppliers">
                                 <table class="ui small single line selectable inverted celled very compact table">
@@ -70,7 +70,7 @@
                                 </table>
                             </div>
                         </div>
-                        <div class="ui small inverted header">Mills</div>
+                        <div id="mills-section" class="ui small inverted header">Mills</div>
                         <div class="item">
                             <div id="mills">
                                 <table class="ui small single line selectable inverted celled very compact table">

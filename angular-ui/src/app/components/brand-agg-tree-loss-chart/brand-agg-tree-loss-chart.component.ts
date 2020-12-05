@@ -9,7 +9,7 @@ import * as CJS from 'chart.js'
 })
 export class BrandAggTreeLossChartComponent implements AfterViewInit {
   @Input() treeCoverStats: TreeCoverAverageStats;
-  @Input() label: string;
+  @Input() chartTitle: string;
 
   private initMap(): void {
     let years = Array.from(new Array(19), (x, i) => i + 2001);

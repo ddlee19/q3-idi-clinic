@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ParamMap, ActivatedRoute, Router } from '@angular/router';
-import { ChartLegendLabelItem } from 'chart.js';
 import { switchMap } from 'rxjs/operators';
-import { DetailedBrand } from 'src/app/interfaces/brands/brand-detailed.interface';
-import { MillProperties } from 'src/app/interfaces/mill.interface';
-import { ApiService } from 'src/app/services/api.service';
+import { DetailedBrand } from '../../interfaces/brands/brand-detailed.interface';
+import { ApiService } from '../../services/api.service';
 
 
 @Component({
@@ -41,13 +39,17 @@ export class BrandReportComponent implements OnInit {
       this.boxPlotData.push(Array.from(this.brand.mills, mill => mill.risk_score_current))
     })
   }
-  
 
+  public navigateToSection(section: string) {
+    window.location.hash = '';
+    window.location.hash = section;
+  }
+  
  /**
  * Closes the report view for the selected brand by navigating back to
  * the selected brand summary card.
  */
- closeBrand(): void {
+  closeBrand(): void {
     this.router.navigate([`/brands-summary/${this.brand.brandid}`]);
   }
   

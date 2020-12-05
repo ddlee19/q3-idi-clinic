@@ -1,8 +1,7 @@
 import { AfterViewInit, Component, Input } from '@angular/core';
 import * as CJS from 'chart.js'
 import "chartjs-chart-box-and-violin-plot/build/Chart.BoxPlot.js";
-import { MillProperties } from 'src/app/interfaces/mill.interface';
-import { BrandAggregateStats } from 'src/app/interfaces/brands/brand-agg-stats.interface'
+
 
 @Component({
   selector: 'app-box-and-whisker-plot',
@@ -11,7 +10,7 @@ import { BrandAggregateStats } from 'src/app/interfaces/brands/brand-agg-stats.i
 })
 export class BoxAndWhiskerPlotComponent implements AfterViewInit {
 
-  @Input() label: string;
+  @Input() chartTitle: string;
   @Input() chartLabels: string[];
   @Input() boxPlotData: number[][];
   @Input() plotType: string;
@@ -23,9 +22,6 @@ export class BoxAndWhiskerPlotComponent implements AfterViewInit {
     let canvasElement = <HTMLCanvasElement>document.getElementById("box-and-whisker");
     let ctx = canvasElement.getContext('2d');
     
-    console.log(this.chartLabels)
-    console.log(this.boxPlotData)
-
     let data = {
       labels: this.chartLabels,
       datasets: [
@@ -51,7 +47,7 @@ export class BoxAndWhiskerPlotComponent implements AfterViewInit {
             position: "top"
           }
         }
-      });
+    });
   }
 
   constructor() { }
