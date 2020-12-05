@@ -2,17 +2,13 @@ import unittest
 import requests
 import pandas as pd
 
-MILLS_API_URL = "https://opendata.arcgis.com/datasets/5c026d553ff049a585b90c3b1d53d4f5_34.geojson"
-UML_QUERY = {'country': 'Indonesia'}
 
 # To-Do: Resolve local host IP address dynamically to avoid use of two variables
 BASE_API_URL_MAC = "http://0.0.0.0:5000/api/v1.0"
 BASE_API_URL_WINDOWS = "http://localhost:5000/api/v1.0"
 BASE_API_URL = BASE_API_URL_WINDOWS
-
-# Comments
-# - Can use self.assertTrue(<condition>) in later test cases
-
+MILLS_API_URL = "https://opendata.arcgis.com/datasets/5c026d553ff049a585b90c3b1d53d4f5_34.geojson"
+UML_QUERY = {'country': 'Indonesia'}
 
 class TestBrandInfo(unittest.TestCase):
 
@@ -23,7 +19,7 @@ class TestBrandInfo(unittest.TestCase):
         the unit tests execute.
         '''
         super(TestBrandInfo, cls).setUpClass()
-        cls.bigTable = pd.read_csv('./data/bigtable.csv')
+        cls.bigTable = pd.read_csv('../data/bigtable.csv')
 
 
     def test_get_brands(self):
@@ -31,7 +27,7 @@ class TestBrandInfo(unittest.TestCase):
         Assert that the "Brands" API endpoint returns the correct number
         of brands.
         '''
-        val_true = 8
+        val_true = 13
         test_url = f"{BASE_API_URL}/brands"
         r = requests.get(test_url)
         test_data = r.json()
@@ -135,10 +131,9 @@ class TestBrandInfo(unittest.TestCase):
         test_data = r.json()
 
         # Verify that each umlid is in the uml list.
-        verification_list = []
         test_umls = [x['properties']['umlid'].lower() in true_umls for x in test_data['features']]
 
-        val_test = all(verification_list)
+        val_test = all(test_umls)
         val_true = True
         self.assertEqual(val_test, val_true)
 
