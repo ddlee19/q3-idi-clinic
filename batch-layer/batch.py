@@ -25,8 +25,8 @@ from log_util import logger
 PROJECT = 'idi-development'
 SERVICE_ACCOUNT = 'idi-service-acct-development@idi-development.iam.gserviceaccount.com'
 KEY = 'privatekey.json'
-OUTPUT_DIR = './output'
-INPUT_DIR = './input'
+OUTPUT_DIR = '../data'
+INPUT_DIR = '../data'
 MILLS_API_URL = "https://opendata.arcgis.com/datasets/5c026d553ff049a585b90c3b1d53d4f5_34.geojson"
 UML_QUERY = {'country': 'Indonesia'}
 OUTPUT_UML_FNAME = 'umls.json'
