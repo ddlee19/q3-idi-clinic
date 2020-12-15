@@ -100,6 +100,7 @@ def load_uml_loss_data():
                                output_file_path,
                                GFC_DATASET_NAME,
                                'umlid',
+                               credentials,
                                area_factor = MILL_AREA_FACTOR)
 """Calculates risk scores
 """
