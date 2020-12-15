@@ -202,6 +202,7 @@ def build_loss_data(input_file_path,
                         output_file_path,
                         GFC_DATASET_NAME,
                         id_col,
+                        credentials,
                         area_factor = 1):
     loss_data = None
     if os.path.exists(output_file_path):
@@ -209,16 +210,7 @@ def build_loss_data(input_file_path,
         logger.info("Reading loss data from {}.".format(output_file_path))
     else:
         # Earth Engine Initialization
-        try:
-            ee.Initialize()
-            logger.info("Earth Engine initialization complete.")
-        except Exception as e:
-            print(e)
-            logger.info('Authentication required.')
-            ee.Authenticate()
-            ee.Initialize()
-            logger.info("Earth Engine initialization complete.")
-
+        ee.Initialize(credentials)
 
         logger.info("Computing loss and area for geometries from {}.".format(input_file_path))
         logger.info("Loading GFC data.")
