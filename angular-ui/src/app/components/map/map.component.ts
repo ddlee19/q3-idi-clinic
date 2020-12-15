@@ -6,7 +6,7 @@ import { NavigationEnd, PRIMARY_OUTLET, Router } from '@angular/router';
 import { filter, startWith } from 'rxjs/operators';
 import * as L from 'leaflet';
 
-
+/** A component representing the app's map. */
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
@@ -224,8 +224,9 @@ export class MapComponent implements AfterViewInit  {
     private router: Router) {}
     
   /** 
-   * Initializes Leaflet map with layers after the DOM loads and then
-   * subscribes to URL navigation events.
+   * Initializes a new Leaflet map with data layers after Angular has
+   * completed initialization of the component view. Then subscribes to URL
+   * navigation events.
    */ 
   async ngAfterViewInit(): Promise<void> {
     await this.initMap();

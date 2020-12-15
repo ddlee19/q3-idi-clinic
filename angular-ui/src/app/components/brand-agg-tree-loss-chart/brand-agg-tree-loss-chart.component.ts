@@ -2,16 +2,24 @@ import { AfterViewInit, Component, Input } from '@angular/core';
 import { TreeCoverAverageStats } from 'src/app/interfaces/stats/stats-treecover-avg.interface';
 import * as CJS from 'chart.js'
 
+/** A component to represent a consumer brand aggregate tree loss line chart. */
 @Component({
   selector: 'app-brand-agg-tree-loss-chart',
   templateUrl: './brand-agg-tree-loss-chart.component.html',
   styleUrls: ['./brand-agg-tree-loss-chart.component.css']
 })
 export class BrandAggTreeLossChartComponent implements AfterViewInit {
+
+  /** The data source */
   @Input() treeCoverStats: TreeCoverAverageStats;
+
+  /** The chart title */
   @Input() chartTitle: string;
 
-  private initMap(): void {
+  /** 
+   * Creates a new line chart.
+  */
+  private plot(): void {
     let years = Array.from(new Array(19), (x, i) => i + 2001);
 
     let meanLosses = [];
@@ -52,9 +60,14 @@ export class BrandAggTreeLossChartComponent implements AfterViewInit {
     });
   }
 
+  /** The class constructor. */
   constructor() { }
 
+   /** 
+   * Creates a new plot after Angular has finished initializing
+   * the component view.
+   */
   ngAfterViewInit(): void {
-    this.initMap();
+    this.plot();
   }
 }

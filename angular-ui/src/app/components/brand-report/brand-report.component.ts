@@ -5,6 +5,7 @@ import { DetailedBrand } from '../../interfaces/brands/brand-detailed.interface'
 import { ApiService } from '../../services/api.service';
 
 
+/** A component for a detailed/report view of a consumer brand. */
 @Component({
   selector: 'app-brand-report',
   templateUrl: './brand-report.component.html',
@@ -12,17 +13,29 @@ import { ApiService } from '../../services/api.service';
 })
 export class BrandReportComponent implements OnInit {
 
+  /** A reference to the brand */
   brand: DetailedBrand;
-  lineChartTitle: string = "Average Tree Cover Loss Per Mill Since 2001";
 
-
-  //Variables below for first boxplot (Current Risk Score)
+  /** Data used to build the plot (i.e., an array of datasets) */
   boxPlotData: number[][] = [];
-  boxPlotTitle: string = "Distribution of Current Risk Score of Mills";
-  boxPlotLabels: string[] = ["Current Risk Score"];
-  plotType: string = "horizontalBoxplot";
-  legendLabel: string = "Current Risk Score";
 
+  /** The title of the box-and-whisker plot */
+  boxPlotTitle: string = "Distribution of Current Risk Score of Mills";
+  
+  /** Labels to distinguish between different box-and-whisker plot datasets */
+  boxPlotLabels: string[] = ["Current Risk Score"];
+
+  /** The legend label used for all datasets */
+  boxPlotLegendLabel: string = "Current Risk Score";
+
+  /** 
+   * The orientation of the box-and-whisker plot. Choices include "boxplot",
+   * which creates a vertical plot, or "horizontalBoxplot."  
+   */
+  boxPlotType: string = "horizontalBoxplot";
+
+  /** The title of the line chart */
+  lineChartTitle: string = "Average Tree Cover Loss Per Mill Since 2001";
 
   /**
   * Parses a consumer brand id from the URL and then retrieves the
@@ -40,6 +53,11 @@ export class BrandReportComponent implements OnInit {
     })
   }
 
+  /**
+   * Navigates to a section of the brand report.
+   * 
+   * @param section: the section name
+   */
   public navigateToSection(section: string) {
     window.location.hash = '';
     window.location.hash = section;
@@ -53,13 +71,22 @@ export class BrandReportComponent implements OnInit {
     this.router.navigate([`/brands-summary/${this.brand.brandid}`]);
   }
   
-  /** Constructs a new instance of an individual brand summary card */
+  /**
+   * The class constructor
+   * 
+   * @param apiService: An injected instance of the ApiService
+   * @param route: An injected instance of the ActivatedRoute
+   * @param router: An injected instance of the Angular Router
+   */
   constructor(
     private apiService: ApiService,
     private route: ActivatedRoute,
     private router: Router) {}
 
-
+ /** 
+   * Calls the ApiService to retrieve the brand specified in the URL
+   * when Angular begins initializing the component view.
+   */
   ngOnInit(): void {
     this.getBrand();
   }

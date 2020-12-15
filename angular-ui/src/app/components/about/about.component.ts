@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-declare var $: any 
-
+/** The component for the "About" modal window. */
 @Component({
   selector: 'app-about',
   templateUrl: './about.component.html',
