@@ -1,7 +1,27 @@
-## Flask API Server
+## web-server
+This directory contains a Flask API for the IDI application backend. The API makes endpoints available for brand, mill, and treeloss aggregations computed in the batch layer.
 
-Provides access to palm oil mill and consumer brand data.
 
+### Running locally
+
+#### Required inputs
+The backend requires four csv files to run. These files are located in the parent directory named `data`.
+
+#### Docker
+The code can be run in a Docker container with the included bash script. The script will copy the required input files into the container, build, and run the app.
+```
+sh run.sh
+```
+
+Alternatively, you can run outside of the container by installing dependencies with pip and running the following:
+```
+python3 -m pip install -r requirements.txt
+python3 app.py local
+```
+
+The backend runs on http://localhost:5000/.
+
+### File Structure
 Overview:
 
 * **app.py**: The Flask application server. Calls methods in dal.py to retrieve appropriate data for incoming requests and then returns that data as JSON.
