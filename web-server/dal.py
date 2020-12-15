@@ -7,6 +7,7 @@
 # API documentation for more details.
 ##
 
+import os
 
 import pandas as pd
 import geopandas as gpd
@@ -16,7 +17,7 @@ from attr_collections import *
 
 class DAL:
 
-    def __init__(self):
+    def __init__(self, input_path):
         '''
         The constructor for the DAL class. Loads data files for processing and
         fills in missing values to prevent DataFrame operation errors.
@@ -27,10 +28,13 @@ class DAL:
         Returns:
             (DAL): a new instance of the class
         '''
-        self._brands = pd.read_csv("../data/uniquebrands.csv")
-        self._brand_mills_full = pd.read_csv("../data/brands.csv")
-        self._brand_mills_thin = pd.read_csv("../data/brand_mills.csv")
-        self._mills = pd.read_csv("../data/uniquemills.csv").query("geometry == geometry")
+        p = input_path
+        self._brands = pd.read_csv(os.path.join(p, "uniquebrands.csv"))
+        self._brand_mills_full = pd.read_csv(os.path.join(p, "brands.csv"))
+        self._brand_mills_thin = pd.read_csv(os.path.join(p, 
+                                                        "brand_mills.csv"))
+        self._mills = pd.read_csv(os.path.join(p, "uniquemills.csv"))\
+                        .query("geometry == geometry")
 
         ids = list(self._brand_mills_thin.umlid)
         self._mills_with_brands = self._mills.query("umlid in @ids")

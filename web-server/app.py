@@ -4,7 +4,7 @@
 #
 ##
 
-
+import sys
 import os
 import requests
 
@@ -19,8 +19,9 @@ cors = CORS(app)
 config = {'host': os.environ.get('APP_HOST', '0.0.0.0'), 
           'port': os.environ.get("PORT", 5000),
           'CORS_HEADERS': 'Content-Type'}
-dal = DAL()
 
+
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 
 @app.route('/api/v1.0/brands/<int:brand_id>', methods=['GET'])
 @cross_origin()
@@ -138,5 +139,13 @@ def not_found(error):
 
 
 if __name__ == "__main__":
-    app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
-    app.run(host=config.get('host'), port=config.get('port'))
+    if len(sys.argv) == 2:
+        if sys.argv[1] == 'docker':
+            input_path = './'
+        elif sys.argv[1] == 'local':
+            input_path = '../data/'
+        dal = DAL(input_path)
+        app.run(host=config.get('host'), port=config.get('port'))
+    else:
+        logger.error('Invalid run arguments. Example: python app.py local')
+        sys.exit(1)
