@@ -1,5 +1,7 @@
 # Angular UI
 
+![App Screenshot](src/assets/images/app_screenshot.png)
+
 This directory contains the project's single-page web application, the _IDI Palm Oil Tracker_. The app was built using [Angular](https://angular.io/) and scaffolded with [Angular CLI](https://github.com/angular/angular-cli) version 10.2.0.
 
 ## Contents  
