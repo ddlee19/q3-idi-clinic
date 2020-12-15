@@ -1,9 +1,14 @@
+# test.py
+#
+# Runs a series of unit tests against the Flask API endpoints.
+#
+##
+
 import unittest
 import requests
 import pandas as pd
 
 
-# To-Do: Resolve local host IP address dynamically to avoid use of two variables
 BASE_API_URL_MAC = "http://0.0.0.0:5000/api/v1.0"
 BASE_API_URL_WINDOWS = "http://localhost:5000/api/v1.0"
 BASE_API_URL = BASE_API_URL_WINDOWS

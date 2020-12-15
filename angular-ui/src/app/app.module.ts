@@ -14,6 +14,7 @@ import { AboutComponent } from './components/about/about.component';
 import { BrandReportComponent } from './components/brand-report/brand-report.component';
 import { BoxAndWhiskerPlotComponent } from './components/box-and-whisker-plot/box-and-whisker-plot.component';
 
+/** The root module */
 @NgModule({
   declarations: [
     AppComponent,

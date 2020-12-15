@@ -25,6 +25,15 @@ dal = DAL()
 @app.route('/api/v1.0/brands/<int:brand_id>', methods=['GET'])
 @cross_origin()
 def get_brand(brand_id):
+    '''
+    Retrieves a single consumer brand by id.
+
+    Parameters:
+        brand_id (int): the unique identifier for the brand
+
+    Returns:
+        JSON
+    '''
     if not dal.is_valid_brand(brand_id):
         abort(404)
     return jsonify(dal.get_brand(brand_id))
@@ -33,39 +42,98 @@ def get_brand(brand_id):
 @app.route('/api/v1.0/brands', methods=['GET'])
 @cross_origin()
 def get_brands():
-    mill_id = request.args.get("mill_id")
-    return jsonify(dal.get_brands(mill_id))
+    '''
+    Retrieves a list of consumer brands.  All brands are returned
+    by default, but one may restrict the result set to all brands associated
+    with a UML mill instead by using a query parameter when calling the API
+    endpoint (e.g., "/api/v1.0/brands?uml_id=po1000000316").
+
+    Parameters:
+        None
+
+    Returns:
+        JSON
+    '''
+    uml_id = request.args.get("uml_id")
+    return jsonify(dal.get_brands(uml_id))
 
 
 @app.route("/api/v1.0/brands/stats", methods=['GET'])
 @cross_origin()
 def get_aggregate_brand_stats():
-   return jsonify(dal.get_brands_aggregate_stats())
+    '''
+    Retrieves statistics computed across all consumer brands.
+
+    Parameters:
+        None
+
+    Returns:
+        JSON
+    '''
+    return jsonify(dal.get_brands_aggregate_stats())
 
 
-@app.route('/api/v1.0/mills/<string:mill_id>', methods=['GET'])
+@app.route('/api/v1.0/mills/<string:uml_id>', methods=['GET'])
 @cross_origin()
-def get_mill(mill_id):
-    if not dal.is_valid_uml_mill(mill_id):
+def get_mill(uml_id):
+    '''
+    Retrieves a detailed representation of a mill on the UML
+    (Universal Mill List) by its UML id.
+
+    Parameters:
+        uml_id (int): the UML id
+
+    Returns:
+        JSON
+    '''
+    if not dal.is_valid_uml_mill(uml_id):
         abort(404)
-    return jsonify(dal.get_mill(mill_id))
+    return jsonify(dal.get_mill(uml_id))
 
 
 @app.route("/api/v1.0/mills", methods=['GET'])
 @cross_origin()
 def get_mills():
+    '''
+    Retrieves all mills from the UML list as a GeoJSON feature collection.
+
+    Parameters:
+        None
+
+    Returns:
+        JSON
+    '''
     return dal.get_mills()
 
 
 @app.route("/api/v1.0/mills/stats", methods=['GET'])
 @cross_origin()
 def get_mill_stats():
+    '''
+    Retrieves statistics computed across all UML mills.
+
+    Parameters:
+        None
+
+    Returns:
+        JSON
+    '''
     return jsonify(dal.get_mills_aggregate_stats())
 
 
 @app.errorhandler(404)
 @cross_origin()
 def not_found(error):
+    '''
+    Generates an error response with a "404 - Not Found" status code
+    if the API receives a request for a non-existent resource/endpoint.
+
+    Parameters:
+        error (Exception): The exception caught by the error handler
+
+    Returns:
+        (flask.Flask.response_class): the response message
+    '''
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 

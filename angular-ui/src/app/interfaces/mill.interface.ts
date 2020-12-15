@@ -63,7 +63,7 @@ export interface MillProperties {
     /** The mill name. */
     mill_name: string;
 
-    /** The country in which the mill is located. */
+    /** The mill's parent company. */
     parent_co: string;
 
     /** The mill's current deforestation risk (1-5). A score of 1 is lowest risk while 5 is highest. */

@@ -1,16 +1,22 @@
+import { Brand } from '../interfaces/brands/brand.interface';
+import { BrandAggregateStats } from '../interfaces/brands/brand-agg-stats.interface';
+import { DetailedBrand } from '../interfaces/brands/brand-detailed.interface';
+import { environment } from 'src/environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MillFeatureCollection } from '../interfaces/mill.interface';
-import { BrandAggregateStats } from '../interfaces/brands/brand-agg-stats.interface';
-import { Brand } from '../interfaces/brands/brand.interface';
-import { DetailedBrand } from '../interfaces/brands/brand-detailed.interface';
-import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
 
+/**
+ * Provides access to an API endpoint serving palm oil mill and consumer brand 
+ * data. The API base URL is set using an environmental variable.
+*/
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
+
+  /** The base API url */
   private apiBase: string = environment.apiBase
 
   /** GET aggregate consumer brand statistics from the server */
@@ -33,5 +39,6 @@ export class ApiService {
       return this.http.get<MillFeatureCollection>(this.apiBase + "mills").toPromise();
   }
 
+  /** Constructs a new instance of the ApiService */
   constructor(private http: HttpClient) { }
 }
