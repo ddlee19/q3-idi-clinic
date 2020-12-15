@@ -29,8 +29,3 @@ python3 batch.py
 
 ### Output files
 Transformed and generated data is written to a `data/` directory at the parent level. This allows the web server to read from the same directory.
-
-# Output
-# Setting up EE and key
-SERVICE_ACCOUNT
-privatekey.json
