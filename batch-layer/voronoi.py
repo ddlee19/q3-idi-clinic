@@ -16,7 +16,8 @@ BUFFER_SIZE = 50000
 BUFFER_RES = 4
 
 class Vor():
-     """Generates Voronoi partitions from UML lat/lon coordinates."""
+    """Generates Voronoi partitions from UML lat/lon coordinates.
+    """
     def __init__(self, data=None):
         if data is not None:
             self.uml = data[['latitude', 'longitude']]
@@ -40,6 +41,7 @@ class Vor():
 
         self.point_map = self.build_ptr_map(self._vor)
         self.region_map = self.build_region_map(self._vor)
+        self.polygon_map = self.build_polygon_map(self._vor)
         self.buffered_points = self.build_point_buffer(self._vor)
 
         self.gen_intersections()
@@ -75,6 +77,17 @@ class Vor():
 
         return regions
 
+    def build_polygon_map(self, vor):
+        """Builds shapely polygons foor coordinates."""
+        for k, v in self.region_map.items():
+            coords = v['vtx_coords']
+
+            polygon = Polygon()
+            # (A LinearRing must have at least 3 coordinate tuples)
+            if len(coords) > 2:
+                polygon = Polygon(coords)
+            self.region_map[k]['polygon'] = polygon
+
     def build_point_buffer(self, vor):
         """Generates buffer surrounding x,y point."""
         for k, point in self.point_map.items():
@@ -97,8 +110,8 @@ class Vor():
                 boundary = Polygon(intsc.boundary.coords[:])
                 self.point_map[k]['boundary_shape'] = boundary
                 self.point_map[k]['boundary_coords'] = boundary.exterior.coords[:]
+            # TopologyException raised by invalid intersection
             except Exception as e:
-                print(k)
                 pass
 
     def gen_output(self):
@@ -118,7 +131,6 @@ class Vor():
         # # Todo: Incomplete  geometries for mills. See issues with 
         # # intersections in shapely docs
 
-        # filter missing or empty geometries
         s = gdf['boundary_shape']
         gdf = gdf[~(s.is_empty | s.isna())]
 
