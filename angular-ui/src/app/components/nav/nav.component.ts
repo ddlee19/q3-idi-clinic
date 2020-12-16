@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-declare var $: any 
+import { ModalService } from '../../services/modal.service';
 
 /** A component for the main navigation bar. */
 @Component({
@@ -25,13 +25,17 @@ export class NavComponent implements OnInit {
     this.openFilterEvent.emit(value);
   }
 
-  /* Uses the Semantic JS library to launch an "About" modal window. */
+  /* Calls the modal service to launch the "About" modal window. */
   launchModal() {
-    $('.ui.modal').modal('show');
+    this.modalService.open();
   }
   
-  /** The class constructor */
-  constructor() { }
+  /**
+   * The class constructor
+   * 
+   * @param modalService: An injected instance of the ModalService
+   */
+  constructor(private modalService: ModalService) { }
 
   /** 
    * A callback method that is invoked immediately after Angular has completed
