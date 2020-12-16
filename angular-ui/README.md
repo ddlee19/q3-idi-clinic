@@ -47,8 +47,6 @@ Many files were generated as part of the Angular CLI scaffolding process. Howeve
 
 * **e2e**: Folder containing the end-to-end tests for the application. (Not currently used or implemented by the team.)
 
-* **semantic**: Folder containing a copy of the [Semantic UI](https://semantic-ui.com/kitchen-sink.html) JavaScript library.  This should be fixed/adjusted in the future so the project only uses Semantic through imported node modules.
-
 * **src**: Folder containing the source files and logic for the application.
 
 * **angular.json**: The Angular project configuration file.
