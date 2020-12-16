@@ -38,7 +38,7 @@ export class BrandComponent implements OnInit {
   closeBrand(): void {
       this.router.navigate(['/brands-summary']);
   }
-  
+
   /** Constructs a new instance of an individual brand summary card */
   constructor(
     private apiService: ApiService,
