@@ -38,4 +38,4 @@ scipy==1.5.4
 Shapely==1.7.1
 six==1.15.0
 uritemplate==3.0.1
-urllib3==1.26.2
+urllib3==1.26.4
